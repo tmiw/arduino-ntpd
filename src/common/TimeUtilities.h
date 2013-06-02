@@ -52,7 +52,7 @@ public:
     /*
      * Returns the number of leap seconds that occurred in the given year.
      */
-    static uint32_t numberOfLeapSecondsInYear(int year, bool skipDecember);
+    static int32_t numberOfLeapSecondsInYear(int year, bool skipDecember);
 };
 
 #endif // TIME_UTILITIES_H

@@ -70,26 +70,35 @@ uint32_t TimeUtilities::numberOfSecondsSince1900Epoch(
     return returnValue;
 }
 
-uint32_t TimeUtilities::numberOfLeapSecondsInYear(int year, bool skipDecember)
+int32_t TimeUtilities::numberOfLeapSecondsInYear(int year, bool skipDecember)
 {
-    // Leap second bit vector. Every group of two bytes is the 6/30 leap second
+    // Leap second bit vector. Every group of two bits is the 6/30 leap second
     // and 12/31 leap second, respectively, beginning from 1972.
     // NOTE: update this whenever IERS announces a new leap second. No, it's 
     //       not optimal.
-    static uint32_t leapSeconds[] = {
+    static uint32_t leapSecondAdds[] = {
         0xD5552A21, // 1972-1988
         0x14A92400, // 1989-2005
         0x10408000, // 2006-2022
         0x00000000  // 2023-2039
     };
+    static uint32_t leapSecondDeletes[] = {
+        0x00000000, // 1972-1988
+        0x00000000, // 1989-2005
+        0x00000000, // 2006-2022
+        0x00000000  // 2023-2039
+    };
     
     const int numBitsPerEntry = (sizeof(uint32_t) * 8);
     uint32_t yearDiff = year - LEAP_SECOND_YEAR;
-    uint32_t leapSecondEntry = leapSeconds[(2*yearDiff) / numBitsPerEntry];
+    uint32_t leapSecondAddEntry = leapSecondAdds[(2*yearDiff) / numBitsPerEntry];
+    uint32_t leapSecondDeleteEntry = leapSecondDeletes[(2*yearDiff) / numBitsPerEntry];
     uint32_t leapSecondMaskJune = 1 << (numBitsPerEntry - (2*yearDiff) - 1);
     uint32_t leapSecondMaskDecember = skipDecember ? 0 : (1 << (numBitsPerEntry - (2*yearDiff) - 2));
     
     return
-        ((leapSecondEntry & leapSecondMaskJune) ? 1 : 0) +
-        ((leapSecondEntry & leapSecondMaskDecember) ? 1 : 0);
+        ((leapSecondAddEntry & leapSecondMaskJune) ? 1 : 0) +
+        ((leapSecondAddEntry & leapSecondMaskDecember) ? 1 : 0) -
+        ((leapSecondDeleteEntry & leapSecondMaskJune) ? 1 : 0) -
+        ((leapSecondDeleteEntry & leapSecondMaskDecember) ? 1 : 0);
 }
