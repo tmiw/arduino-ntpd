@@ -17,7 +17,9 @@ class GPSTimeSource : ITimeSource
 {
 public:
     GPSTimeSource(IDataSource &dataSource)
-        : dataSource_(dataSource)
+        : dataSource_(dataSource),
+          secondsSinceEpoch_(0),
+          fractionalSecondsSinceEpoch_(0)
     {
         // empty
     }
