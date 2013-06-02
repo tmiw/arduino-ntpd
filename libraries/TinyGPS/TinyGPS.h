@@ -23,10 +23,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef TinyGPS_h
 #define TinyGPS_h
 
-#if defined(ARDUINO) && ARDUINO >= 100
+#if defined(ARDUINO)
+
+// Include Arduino specific code.
+#if ARDUINO >= 100
 #include "Arduino.h"
 #else
 #include "WProgram.h"
+#endif
+
+#else
+
+#include <math.h>
+#include <stdlib.h>
+
+// Support for compiling TinyGPS outside of the Arduino environment.
+typedef unsigned char byte;
+#define TWO_PI (3.14159 * 2)
+#define millis() (0)
+#define radians(deg) ((deg) * 3.14159/180)
+#define degrees(rad) ((rad) * 180/3.14159)
+#define sq(num) ((num) * (num))
+
 #endif
 
 #define _GPS_VERSION 12 // software version of this library

@@ -9,7 +9,7 @@
 #ifndef GPS_TIMESOURCE_H
 #define GPS_TIMESOURCE_H
 
-#include "libraries/TinyGPS/TinyGPS.h"
+#include "TinyGPS/TinyGPS.h"
 #include "interfaces/ITimeSource.h"
 #include "interfaces/IDataSource.h"
 

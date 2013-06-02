@@ -7,6 +7,7 @@
  */
  
 #include "GPSTimeSource.h"
+#include "TimeUtilities.h"
 
 uint32_t GPSTimeSource::getSecondsSinceEpoch(void) const
 {
@@ -31,7 +32,7 @@ void GPSTimeSource::updateTime(void)
             unsigned long fix_age;
 
             gps_.crack_datetime(&year, &month, &day,
-              &hour, &minute, &second, &hundredths, &fix_age);
+              &hour, &minutes, &second, &hundredths, &fix_age);
               
             // We don't want to use the time we've received if 
             // the fix is invalid.
@@ -39,7 +40,7 @@ void GPSTimeSource::updateTime(void)
             {
                 secondsSinceEpoch_ =
                     TimeUtilities::numberOfSecondsSince1900Epoch(
-                        year, month, day, hour, minute, second);
+                        year, month, day, hour, minutes, second);
                 fractionalSecondsSinceEpoch_ =
                     ((int)hundredths * 10) * (0xFFFFFF / 1000);
             }
