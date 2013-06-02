@@ -6,8 +6,8 @@ using time data from GPS satellites.
 
 Prerequisites
 -------------------------
-* Arduino board [1] -- TODO: compatibility list.
-* GPS shield [2] with appropriate GPS module that outputs NMEA data [3].
+* [Arduino board] [1] -- TODO: compatibility list.
+* [GPS shield] [2] with appropriate [GPS module] [3] that outputs NMEA data.
 
 User's Guide
 -------------------------
@@ -24,8 +24,6 @@ $ cd test; sh runTestApps.sh
 Current time (seconds since 1900): 3579060209
 </pre>
 
-References
--------------------------
   [1]: http://arduino.cc/                         "Arduino"
   [2]: https://www.sparkfun.com/products/10710    "GPS Shield @ SparkFun"
   [3]: https://www.sparkfun.com/products/465      "GPS module compatible with GPS Shield"
