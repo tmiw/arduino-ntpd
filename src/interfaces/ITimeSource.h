@@ -10,6 +10,8 @@
 #ifndef I_TIMESOURCE_H
 #define I_TIMESOURCE_H
 
+#include <stdint.h>
+
 class ITimeSource
 {
 public:         

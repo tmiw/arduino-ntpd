@@ -33,7 +33,7 @@ public:
     virtual void updateTime(void);
     
 private:
-    uint32_t secondsSinceEpoch;
+    uint32_t secondsSinceEpoch_;
 };
 
 #endif // PC_TIMESOURCE_H

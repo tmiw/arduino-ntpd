@@ -14,7 +14,7 @@
 
 uint32_t PCTimeSource::getSecondsSinceEpoch(void) const
 {
-    return secondsSinceEpoch;
+    return secondsSinceEpoch_;
 }
 
 uint32_t PCTimeSource::getFractionalSecondsSinceEpoch(void) const
@@ -36,7 +36,7 @@ void PCTimeSource::updateTime(void)
     // time returned by gmtime(). We can't use rawTime directly
     // due to a different epoch being used (1970 vs 1900 per the 
     // interface).
-    secondsSinceEpoch = TimeUtilities::numberOfSecondsSince1900Epoch(
+    secondsSinceEpoch_ = TimeUtilities::numberOfSecondsSince1900Epoch(
         timeAsUTC->tm_year + TimeUtilities::EPOCH_YEAR, 
         timeAsUTC->tm_mon + 1, timeAsUTC->tm_mday, 
         timeAsUTC->tm_hour, timeAsUTC->tm_min, timeAsUTC->tm_sec);

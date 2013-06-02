@@ -10,12 +10,12 @@
 
 uint32_t GPSTimeSource::getSecondsSinceEpoch(void) const
 {
-    return 0; // TODO
+    return secondsSinceEpoch_;
 }
 
 uint32_t GPSTimeSource::getFractionalSecondsSinceEpoch(void) const
 {
-    return 0; // TODO
+    return fractionalSecondsSinceEpoch_;
 }
 
 void GPSTimeSource::updateTime(void)
@@ -25,7 +25,31 @@ void GPSTimeSource::updateTime(void)
         int c = dataSource_.read();
         if (gps_.encode(c))
         {
-            // TODO
+            // Grab time from now-valid data.
+            int year;
+            byte month, day, hour, minutes, second, hundredths;
+            unsigned long fix_age;
+
+            gps_.crack_datetime(&year, &month, &day,
+              &hour, &minute, &second, &hundredths, &fix_age);
+              
+            // We don't want to use the time we've received if 
+            // the fix is invalid.
+            if (fix_age != TinyGPS::GPS_INVALID_AGE && fix_age < 5000)
+            {
+                secondsSinceEpoch_ =
+                    TimeUtilities::numberOfSecondsSince1900Epoch(
+                        year, month, day, hour, minute, second);
+                fractionalSecondsSinceEpoch_ =
+                    ((int)hundredths * 10) * (0xFFFFFF / 1000);
+            }
+            else
+            {
+                // Set time to 0 if invalid.
+                // TODO: does the interface need an accessor for "invalid time"?
+                secondsSinceEpoch_ = 0;
+                fractionalSecondsSinceEpoch_ = 0;
+            }
         }
     }
 }

@@ -42,6 +42,8 @@ public:
 private:
     TinyGPS gps_;
     IDataSource &dataSource_;
+    uint32_t secondsSinceEpoch_;
+    uint32_t fractionalSecondsSinceEpoch_;
 };
 
 #endif // GPS_TIMESOURCE_H
