@@ -8,7 +8,7 @@
  
 #include "TimeUtilities.h"
 
-unsigned long TimeUtilities::numberOfSecondsSince1900Epoch(
+uint32_t TimeUtilities::numberOfSecondsSince1900Epoch(
     int year, int month, int day, int hour, int minute, int second)
 {
     unsigned long returnValue = 0;

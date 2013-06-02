@@ -32,7 +32,7 @@ public:
      * NOTE: this does not account for leap seconds, so there may be 
      *       some variation.
      */
-    static unsigned long numberOfSecondsSince1900Epoch(
+    static uint32_t numberOfSecondsSince1900Epoch(
         int year, int month, int day, int hour, int minute, int second);
 };
 
