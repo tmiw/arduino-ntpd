@@ -35,7 +35,7 @@ uint32_t TimeUtilities::numberOfSecondsSince1900Epoch(
     
         // For the current year, only add the June leap second if the current month is 
         // >= July.
-        if (month > 7)
+        if (month >= 7)
         {
             returnValue += numberOfLeapSecondsInYear(year, true);
         }
