@@ -23,7 +23,14 @@ public:
      * The year leap seconds began.
      */
     static const int LEAP_SECOND_YEAR = 1972;
-         
+    
+    /*
+     * The amount of seconds we were already behind by by 1972.
+     * This is added to all times in year >= 1972 before the addition
+     * of leap seconds.
+     */
+    static const int LEAP_SECOND_CATCHUP_VALUE = 10;
+          
     /*
      * Time/date constants that will probably never change.
      */

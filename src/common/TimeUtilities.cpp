@@ -26,6 +26,8 @@ uint32_t TimeUtilities::numberOfSecondsSince1900Epoch(
     // add 1 second for each 1 bit in the leapSeconds array.
     if (year >= LEAP_SECOND_YEAR)
     {
+        returnValue += LEAP_SECOND_CATCHUP_VALUE;
+        
         for (int currentYear = LEAP_SECOND_YEAR; currentYear < year; currentYear++)
         {
             returnValue += numberOfLeapSecondsInYear(currentYear, false);
