@@ -11,7 +11,7 @@
 uint32_t TimeUtilities::numberOfSecondsSince1900Epoch(
     int year, int month, int day, int hour, int minute, int second)
 {
-    unsigned long returnValue = 0;
+    uint32_t returnValue = 0;
     
     // February is 28 here, but we will account for leap years further down.
     int numDaysInMonths[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
