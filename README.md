@@ -8,6 +8,7 @@ Prerequisites
 -------------------------
 * [Arduino board] [1] -- TODO: compatibility list.
 * [GPS shield] [2] with appropriate [GPS module] [3] that outputs NMEA data.
+* Ethernet shield.
 
 User's Guide
 -------------------------
