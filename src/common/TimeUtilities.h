@@ -9,6 +9,8 @@
 #ifndef TIME_UTILITIES_H
 #define TIME_UTILITIES_H
 
+#include <stdint.h>
+
 class TimeUtilities
 {
 public:
@@ -17,6 +19,11 @@ public:
      */
     static const int EPOCH_YEAR = 1900;
     
+    /*
+     * The year leap seconds began.
+     */
+    static const int LEAP_SECOND_YEAR = 1972;
+         
     /*
      * Time/date constants that will probably never change.
      */
@@ -34,6 +41,11 @@ public:
      */
     static uint32_t numberOfSecondsSince1900Epoch(
         int year, int month, int day, int hour, int minute, int second);
+
+    /*
+     * Returns the number of leap seconds that occurred in the given year.
+     */
+    static uint32_t numberOfLeapSecondsInYear(int year, bool skipDecember);
 };
 
 #endif // TIME_UTILITIES_H
