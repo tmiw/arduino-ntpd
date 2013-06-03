@@ -13,13 +13,18 @@
 #include "interfaces/ITimeSource.h"
 #include "interfaces/IDataSource.h"
 
-class GPSTimeSource : ITimeSource
+class GPSTimeSource : public ITimeSource
 {
 public:
     GPSTimeSource(IDataSource &dataSource)
         : dataSource_(dataSource),
           secondsSinceEpoch_(0),
           fractionalSecondsSinceEpoch_(0)
+    {
+        // empty
+    }
+    
+    virtual ~GPSTimeSource()
     {
         // empty
     }

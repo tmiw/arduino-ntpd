@@ -9,10 +9,12 @@
 #include <iostream>
 #include "common/TimeUtilities.h"
 #include "pc/PCTimeSource.h"
+#include "pc/SimulatedNMEADataSource.h"
+#include "common/GPSTimeSource.h"
 
 int main(void)
 {
-    PCTimeSource timeSource;
+/*    PCTimeSource timeSource;
     timeSource.updateTime();
     
     std::cout << "Current time (seconds since 1900): " << timeSource.getSecondsSinceEpoch() << std::endl;
@@ -27,7 +29,17 @@ int main(void)
                   << ls 
                   << std::endl;
     }
-    std::cout << "total leap seconds: " << totalLeapSeconds << std::endl;
+    std::cout << "total leap seconds: " << totalLeapSeconds << std::endl;*/
+    
+    SimulatedNMEADataSource source;
+    GPSTimeSource gps(source);
+    
+    while(true)
+    {
+        gps.updateTime();
+        std::cout << "secs since 1900: " << gps.getSecondsSinceEpoch() << std::endl;
+        sleep(1);
+    }
     
     return 0;
 }

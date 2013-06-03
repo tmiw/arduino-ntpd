@@ -12,7 +12,7 @@
 
 #include "interfaces/ITimeSource.h"
 
-class PCTimeSource : ITimeSource
+class PCTimeSource : public ITimeSource
 {
 public:
     /*
