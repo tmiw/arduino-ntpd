@@ -61,15 +61,7 @@ void loop()
         timeSource.updateTime();
         
         // Populate response.
-        packet.swapEndian();
-        
-        Serial.print("LI: ");
-        Serial.println(packet.leapIndicator());
-        Serial.print("VN: ");
-        Serial.println(packet.versionNumber());
-        Serial.print("Mode: ");
-        Serial.println(packet.mode());
-        
+        packet.swapEndian();        
         packet.leapIndicator(0);
         packet.versionNumber(4);
         packet.mode(4);
@@ -82,6 +74,8 @@ void loop()
         packet.referenceId[1] = 'P';
         packet.referenceId[2] = 'S';
         packet.referenceId[3] = 0;
+        packet.referenceTimestampSeconds = timeSource.getSecondsSinceEpoch();
+        packet.referenceTimestampFraction = timeSource.getFractionalSecondsSinceEpoch();
         packet.originTimestampSeconds = packet.transmitTimestampSeconds;
         packet.originTimestampFraction = packet.transmitTimestampFraction;
         packet.receiveTimestampSeconds = timeSource.getSecondsSinceEpoch();
