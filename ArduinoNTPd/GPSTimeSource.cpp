@@ -9,6 +9,31 @@
 #include "GPSTimeSource.h"
 #include "TimeUtilities.h"
 
+GPSTimeSource *GPSTimeSource::Singleton_ = NULL;
+volatile bool ledState = false;
+
+void GPSTimeSource::enableInterrupts()
+{
+#ifdef PPS_INTERRUPT_LINE
+    Singleton_ = this;
+    pinMode(PPS_PIN, INPUT);
+    pinMode(13, OUTPUT);
+    digitalWrite(13, ledState ? HIGH : LOW);
+    attachInterrupt(PPS_INTERRUPT_LINE, PpsInterrupt_, RISING);
+#endif // PPS_INTERRUPT_LINE
+}
+
+#ifdef PPS_INTERRUPT_LINE
+void GPSTimeSource::PpsInterrupt_()
+{
+    Singleton_->secondsSinceEpoch_++;
+    Singleton_->fractionalSecondsSinceEpoch_ = 0;
+    Singleton_->millisecondsOfLastUpdate_ = micros();
+    digitalWrite(13, ledState ? HIGH : LOW);
+    ledState = !ledState;
+}
+#endif // PPS_INTERRUPT_LINE
+
 uint32_t GPSTimeSource::getSecondsSinceEpoch(void) const
 {
     return secondsSinceEpoch_;

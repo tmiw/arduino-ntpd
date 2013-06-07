@@ -36,6 +36,9 @@ void setup()
     // Set up network.
     Ethernet.begin(macAddress, ipAddress);
     ntpUdp.begin(NTP_PORT);
+    
+    // Enable GPS interrupts.
+    timeSource.enableInterrupts();
 }
 
 void loop()
@@ -68,8 +71,8 @@ void loop()
         packet.stratum = 1;
         packet.poll = 10; // 6-10 per RFC 5905.
         packet.precision = -18; // ~one microsecond precision.
-        packet.rootDelay = 60 * (0xFFFF / 1000); // ~60 milliseconds, TBD
-        packet.rootDispersion = 10 * (0xFFFF / 1000); // ~10 millisecond dispersion, TBD
+        packet.rootDelay = 0; //60 * (0xFFFF / 1000); // ~60 milliseconds, TBD
+        packet.rootDispersion = 0; //10 * (0xFFFF / 1000); // ~10 millisecond dispersion, TBD
         packet.referenceId[0] = 'G';
         packet.referenceId[1] = 'P';
         packet.referenceId[2] = 'S';

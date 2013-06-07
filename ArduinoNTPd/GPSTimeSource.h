@@ -9,6 +9,12 @@
 #ifndef GPS_TIMESOURCE_H
 #define GPS_TIMESOURCE_H
 
+// Uncomment the below to take advantage of the PPS output of the EM-406.
+// This will allow more accurate results to be sent to clients.
+// See http://arduino.cc/en/Reference/AttachInterrupt for the correct value here.
+#define PPS_INTERRUPT_LINE 3
+#define PPS_PIN 19
+
 #if defined(ARDUINO)
 #include "Arduino.h"
 #endif // defined(ARDUINO)
@@ -17,6 +23,10 @@
 #include "ITimeSource.h"
 #include "IDataSource.h"
 
+/*
+ * A time source based on GPS satellite time.
+ * WARNING: only one instance of this class should be instantiated if PPS mode is enabled.
+ */
 class GPSTimeSource : public ITimeSource
 {
 public:
@@ -49,14 +59,23 @@ public:
      * Grabs latest time from the time source.
      */
     virtual bool updateTime(void);
-    
+
+    /*
+     * Enables interrupts.
+     */
+    void enableInterrupts();    
 private:
+    static GPSTimeSource *Singleton_;
+    
     TinyGPS gps_;
     IDataSource &dataSource_;
     uint32_t secondsSinceEpoch_;
     uint32_t fractionalSecondsSinceEpoch_;
-    
     uint32_t millisecondsOfLastUpdate_;
+    
+#ifdef PPS_INTERRUPT_LINE
+    static void PpsInterrupt_();
+#endif // PPS_INTERRUPT_LINE
 };
 
 #endif // GPS_TIMESOURCE_H
