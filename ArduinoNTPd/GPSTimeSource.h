@@ -48,7 +48,7 @@ public:
     /* 
      * Grabs latest time from the time source.
      */
-    virtual void updateTime(void);
+    virtual bool updateTime(void);
     
 private:
     TinyGPS gps_;

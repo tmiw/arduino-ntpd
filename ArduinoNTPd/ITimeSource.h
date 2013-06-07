@@ -30,7 +30,7 @@ public:
     /* 
      * Grabs latest time from the time source.
      */
-    virtual void updateTime(void) = 0;
+    virtual bool updateTime(void) = 0;
 };
 
 #endif // I_TIMESOURCE_H

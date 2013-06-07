@@ -9,7 +9,7 @@
 #include "TimeUtilities.h"
 
 uint32_t TimeUtilities::numberOfSecondsSince1900Epoch(
-    int year, int month, int day, int hour, int minute, int second)
+    uint32_t year, uint32_t month, uint32_t day, uint32_t hour, uint32_t minute, uint32_t second)
 {
     uint32_t returnValue = 0;
     
@@ -28,7 +28,7 @@ uint32_t TimeUtilities::numberOfSecondsSince1900Epoch(
     {
         returnValue += LEAP_SECOND_CATCHUP_VALUE;
         
-        for (int currentYear = LEAP_SECOND_YEAR; currentYear < year; currentYear++)
+        for (uint32_t currentYear = LEAP_SECOND_YEAR; currentYear < year; currentYear++)
         {
             returnValue += numberOfLeapSecondsInYear(currentYear, false);
         }
@@ -44,8 +44,8 @@ uint32_t TimeUtilities::numberOfSecondsSince1900Epoch(
     // Days, months and years are as well, with several caveats: 
     //   a) We need to account for leap years.
     //   b) We need to account for different sized months.
-    int numDays = 0;
-    for (int currentYear = EPOCH_YEAR; currentYear <= year; currentYear++)
+    uint32_t numDays = 0;
+    for (uint32_t currentYear = EPOCH_YEAR; currentYear <= year; currentYear++)
     {
         int multipleOfFour = (currentYear % 4) == 0;
         int multipleOfOneHundred = (currentYear % 100) == 0;
@@ -59,7 +59,7 @@ uint32_t TimeUtilities::numberOfSecondsSince1900Epoch(
         }
     }
     numDays += DAYS_IN_YEAR * (year - EPOCH_YEAR);
-    for (int currentMonth = 1; currentMonth < month; currentMonth++)
+    for (uint32_t currentMonth = 1; currentMonth < month; currentMonth++)
     {
         numDays += numDaysInMonths[currentMonth];
     }
@@ -70,7 +70,7 @@ uint32_t TimeUtilities::numberOfSecondsSince1900Epoch(
     return returnValue;
 }
 
-int32_t TimeUtilities::numberOfLeapSecondsInYear(int year, bool skipDecember)
+uint32_t TimeUtilities::numberOfLeapSecondsInYear(uint32_t year, bool skipDecember)
 {
     // Leap second bit vector. Every group of two bits is the 6/30 leap second
     // and 12/31 leap second, respectively, beginning from 1972.

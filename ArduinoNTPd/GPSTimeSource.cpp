@@ -19,8 +19,10 @@ uint32_t GPSTimeSource::getFractionalSecondsSinceEpoch(void) const
     return fractionalSecondsSinceEpoch_;
 }
 
-void GPSTimeSource::updateTime(void)
+bool GPSTimeSource::updateTime(void)
 {
+    bool returnValue = false;
+    
     while (dataSource_.available())
     {
         int c = dataSource_.read();
@@ -37,7 +39,7 @@ void GPSTimeSource::updateTime(void)
             // We don't want to use the time we've received if 
             // the fix is invalid.
             if (fix_age != TinyGPS::GPS_INVALID_AGE && fix_age < 5000)
-            {
+            {                
                 secondsSinceEpoch_ =
                     TimeUtilities::numberOfSecondsSince1900Epoch(
                         year, month, day, hour, minutes, second);
@@ -51,6 +53,10 @@ void GPSTimeSource::updateTime(void)
                 secondsSinceEpoch_ = 0;
                 fractionalSecondsSinceEpoch_ = 0;
             }
+            
+            returnValue = true;
         }
     }
+    
+    return returnValue;
 }

@@ -47,12 +47,12 @@ public:
      *       some variation.
      */
     static uint32_t numberOfSecondsSince1900Epoch(
-        int year, int month, int day, int hour, int minute, int second);
+        uint32_t year, uint32_t month, uint32_t day, uint32_t hour, uint32_t minute, uint32_t second);
 
     /*
      * Returns the number of leap seconds that occurred in the given year.
      */
-    static int32_t numberOfLeapSecondsInYear(int year, bool skipDecember);
+    static uint32_t numberOfLeapSecondsInYear(uint32_t year, bool skipDecember);
 };
 
 #endif // TIME_UTILITIES_H

@@ -23,7 +23,7 @@ uint32_t PCTimeSource::getFractionalSecondsSinceEpoch(void) const
     return 0;
 }
 
-void PCTimeSource::updateTime(void)
+bool PCTimeSource::updateTime(void)
 {
     time_t rawTime;
     struct tm *timeAsUTC;
@@ -40,4 +40,6 @@ void PCTimeSource::updateTime(void)
         timeAsUTC->tm_year + TimeUtilities::EPOCH_YEAR, 
         timeAsUTC->tm_mon + 1, timeAsUTC->tm_mday, 
         timeAsUTC->tm_hour, timeAsUTC->tm_min, timeAsUTC->tm_sec);
+
+    return true;
 }

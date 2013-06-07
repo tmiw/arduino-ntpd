@@ -30,7 +30,7 @@ public:
     /* 
      * Grabs latest time from the time source.
      */
-    virtual void updateTime(void);
+    virtual bool updateTime(void);
     
 private:
     uint32_t secondsSinceEpoch_;

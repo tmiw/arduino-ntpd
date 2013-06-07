@@ -25,12 +25,13 @@ void setup()
 
 void loop()
 {
-    timeSource.updateTime();
-    Serial.print("Secs since 1900: ");
-    Serial.print(timeSource.getSecondsSinceEpoch());
-    Serial.print(".");
-    Serial.println(timeSource.getFractionalSecondsSinceEpoch());
-    delay(1000);
+    if (timeSource.updateTime())
+    {
+        Serial.print("Secs since 1900: ");
+        Serial.print(timeSource.getSecondsSinceEpoch());
+        Serial.print(".");
+        Serial.println(timeSource.getFractionalSecondsSinceEpoch());
+    }
 }
 
 #endif // defined(ARDUINO)
