@@ -27,6 +27,14 @@ public:
     {
         // GPS module needs 4800 baud.
         serialPort_.begin(4800);
+        
+        // Disable everything but $GPRMC
+        serialPort_.write("$PSRF103,00,00,01*08\r\n");
+        serialPort_.write("$PSRF103,01,00,01*09\r\n");
+        serialPort_.write("$PSRF103,02,00,01*0A\r\n");
+        serialPort_.write("$PSRF103,03,00,01*0B\r\n");
+        serialPort_.write("$PSRF103,04,01,01*0D\r\n");
+        serialPort_.write("$PSRF103,05,00,01*0D\r\n");
     }
     
     /*

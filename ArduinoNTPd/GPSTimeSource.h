@@ -13,7 +13,6 @@
 // This will allow more accurate results to be sent to clients.
 // See http://arduino.cc/en/Reference/AttachInterrupt for the correct value here.
 #define PPS_INTERRUPT_LINE 4
-#define PPS_PIN 19
 
 #if defined(ARDUINO)
 #include "Arduino.h"
