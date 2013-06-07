@@ -12,7 +12,7 @@
 // Uncomment the below to take advantage of the PPS output of the EM-406.
 // This will allow more accurate results to be sent to clients.
 // See http://arduino.cc/en/Reference/AttachInterrupt for the correct value here.
-#define PPS_INTERRUPT_LINE 3
+#define PPS_INTERRUPT_LINE 4
 #define PPS_PIN 19
 
 #if defined(ARDUINO)

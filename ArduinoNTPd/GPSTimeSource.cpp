@@ -20,6 +20,7 @@ void GPSTimeSource::enableInterrupts()
     pinMode(13, OUTPUT);
     digitalWrite(13, ledState ? HIGH : LOW);
     attachInterrupt(PPS_INTERRUPT_LINE, PpsInterrupt_, RISING);
+    Serial.println("interrupts enabled");
 #endif // PPS_INTERRUPT_LINE
 }
 
