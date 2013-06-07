@@ -24,7 +24,7 @@ uint32_t TimeUtilities::numberOfSecondsSince1900Epoch(
     
     // Leap second handling. For each year between 1972 and the provided year,
     // add 1 second for each 1 bit in the leapSeconds array.
-    if (year >= LEAP_SECOND_YEAR)
+    /*if (year >= LEAP_SECOND_YEAR)
     {
         returnValue += LEAP_SECOND_CATCHUP_VALUE;
         
@@ -39,7 +39,7 @@ uint32_t TimeUtilities::numberOfSecondsSince1900Epoch(
         {
             returnValue += numberOfLeapSecondsInYear(year, true);
         }
-    }
+    }*/
     
     // Days, months and years are as well, with several caveats: 
     //   a) We need to account for leap years.
@@ -63,7 +63,7 @@ uint32_t TimeUtilities::numberOfSecondsSince1900Epoch(
     {
         numDays += numDaysInMonths[currentMonth];
     }
-    numDays += day - 1;
+    numDays += day;
     returnValue += numDays * SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY;
     
     // Return final result.
