@@ -9,9 +9,13 @@
 #ifndef GPS_TIMESOURCE_H
 #define GPS_TIMESOURCE_H
 
-#include "TinyGPS/TinyGPS.h"
-#include "interfaces/ITimeSource.h"
-#include "interfaces/IDataSource.h"
+#if defined(ARDUINO)
+#include "Arduino.h"
+#endif // defined(ARDUINO)
+
+#include <TinyGPS.h>
+#include "ITimeSource.h"
+#include "IDataSource.h"
 
 class GPSTimeSource : public ITimeSource
 {
