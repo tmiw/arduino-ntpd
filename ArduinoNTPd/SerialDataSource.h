@@ -17,7 +17,7 @@
 
 // TODO: move to a config.h or something.
 #define RX_PIN 11
-#define TX_PIN 10
+#define TX_PIN 12
 
 class SerialDataSource : public IDataSource
 {
