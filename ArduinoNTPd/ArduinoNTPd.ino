@@ -67,9 +67,9 @@ void loop()
         packet.mode(4);
         packet.stratum = 1;
         packet.poll = 10; // 6-10 per RFC 5905.
-        packet.precision = 0; // one second precision.
-        //packet.rootDelay = 0; // TBD
-        //packet.rootDispersion = 0; // TBD
+        packet.precision = -18; // ~one microsecond precision.
+        packet.rootDelay = 60 * (0xFFFF / 1000); // ~60 milliseconds, TBD
+        packet.rootDispersion = 10 * (0xFFFF / 1000); // ~10 millisecond dispersion, TBD
         packet.referenceId[0] = 'G';
         packet.referenceId[1] = 'P';
         packet.referenceId[2] = 'S';

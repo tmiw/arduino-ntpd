@@ -46,12 +46,12 @@ bool GPSTimeSource::updateTime(void)
                 uint32_t tempFract =
                     ((int)hundredths * 10) * (0xFFFFFF / 1000);
                     
-                if (tempSeconds != secondsSinceEpoch_ || tempFract != fractionalSecondsSinceEpoch_ )
+                if (tempSeconds != secondsSinceEpoch_)
                 {
                     secondsSinceEpoch_ = tempSeconds;
                     fractionalSecondsSinceEpoch_ = tempFract;
                     
-                    millisecondsOfLastUpdate_ = millis();
+                    millisecondsOfLastUpdate_ = micros();
                     returnValue = true;
                 }
             }
@@ -61,7 +61,7 @@ bool GPSTimeSource::updateTime(void)
                 // TODO: does the interface need an accessor for "invalid time"?
                 secondsSinceEpoch_ = 0;
                 fractionalSecondsSinceEpoch_ = 0;
-                millisecondsOfLastUpdate_ = millis();
+                millisecondsOfLastUpdate_ = micros();
             }
         }
     }
@@ -70,12 +70,19 @@ bool GPSTimeSource::updateTime(void)
     {
         // No GPS update yet. Calculate new fractional value based on system runtime
         // since the EM-406 does not seem to return anything other than whole seconds.
-        uint32_t millisecondDifference = millis() - millisecondsOfLastUpdate_;
+        uint32_t millisecondDifference = micros() - millisecondsOfLastUpdate_;
+
+        secondsSinceEpoch_ += (millisecondDifference / 1000000);
         
-        secondsSinceEpoch_ += (millisecondDifference / 1000);
-        fractionalSecondsSinceEpoch_ =
-            (millisecondDifference % 1000) * (0xFFFFFF / 1000);
-        millisecondsOfLastUpdate_ = millis();
+        uint32_t tempFract = fractionalSecondsSinceEpoch_ + (millisecondDifference % 1000000) * (0xFFFFFF / 1000000);
+        if (tempFract < fractionalSecondsSinceEpoch_)
+        {
+            // overflow
+            secondsSinceEpoch_++;
+        }
+        
+        fractionalSecondsSinceEpoch_ = tempFract;
+        millisecondsOfLastUpdate_ = micros();
     }
     
     return returnValue;
