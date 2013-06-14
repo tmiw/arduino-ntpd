@@ -62,6 +62,8 @@ void loop()
         
         // We need the time we've received the packet in our response.
         timeSource.updateTime();
+        uint32_t recvSecs = timeSource.getSecondsSinceEpoch();
+        uint32_t recvFract = timeSource.getFractionalSecondsSinceEpoch();
         
         // Populate response.
         packet.swapEndian();        
@@ -77,18 +79,23 @@ void loop()
         packet.referenceId[1] = 'P';
         packet.referenceId[2] = 'S';
         packet.referenceId[3] = 0;
+        timeSource.updateTime();
+        noInterrupts();
         packet.referenceTimestampSeconds = timeSource.getSecondsSinceEpoch();
         packet.referenceTimestampFraction = timeSource.getFractionalSecondsSinceEpoch();
+        interrupts();
         packet.originTimestampSeconds = packet.transmitTimestampSeconds;
         packet.originTimestampFraction = packet.transmitTimestampFraction;
-        packet.receiveTimestampSeconds = timeSource.getSecondsSinceEpoch();
-        packet.receiveTimestampFraction = timeSource.getFractionalSecondsSinceEpoch();
+        packet.receiveTimestampSeconds = recvSecs;
+        packet.receiveTimestampFraction = recvFract;
         
         // ...and the transmit time.
         timeSource.updateTime();
-        
+
+        noInterrupts();        
         packet.transmitTimestampSeconds = timeSource.getSecondsSinceEpoch();
         packet.transmitTimestampFraction = timeSource.getFractionalSecondsSinceEpoch();
+        interrupts();
         
         // Now transmit the response to the client.
         packet.swapEndian();
