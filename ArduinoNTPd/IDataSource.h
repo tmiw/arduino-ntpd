@@ -13,6 +13,8 @@
 class IDataSource
 {
 public:
+    virtual ~IDataSource() { }
+
     /*
      * Returns whether there is data available to be read.
      */

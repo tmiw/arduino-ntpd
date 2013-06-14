@@ -8,13 +8,18 @@
  */
 
 #include <string>
-#include "interfaces/IDataSource.h"
+#include "IDataSource.h"
 
 class SimulatedNMEADataSource : public IDataSource
 {
 public:
     SimulatedNMEADataSource()
         : currentlyReading_(false)
+    {
+        // empty
+    }
+
+    virtual ~SimulatedNMEADataSource()
     {
         // empty
     }

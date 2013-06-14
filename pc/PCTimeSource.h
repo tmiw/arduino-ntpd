@@ -10,7 +10,7 @@
 #ifndef PC_TIMESOURCE_H
 #define PC_TIMESOURCE_H
 
-#include "interfaces/ITimeSource.h"
+#include "ITimeSource.h"
 
 class PCTimeSource : public ITimeSource
 {

@@ -7,10 +7,10 @@
  */
 
 #include <iostream>
-#include "common/TimeUtilities.h"
-#include "pc/PCTimeSource.h"
-#include "pc/SimulatedNMEADataSource.h"
-#include "common/GPSTimeSource.h"
+#include "TimeUtilities.h"
+#include "PCTimeSource.h"
+#include "SimulatedNMEADataSource.h"
+#include "GPSTimeSource.h"
 
 int main(void)
 {

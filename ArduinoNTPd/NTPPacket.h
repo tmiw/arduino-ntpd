@@ -11,6 +11,9 @@
 
 #if defined(ARDUINO)
 #include "Arduino.h"
+#else
+#include <string.h>
+#include <stdint.h>
 #endif // defined(ARDUINO)
 
 /*

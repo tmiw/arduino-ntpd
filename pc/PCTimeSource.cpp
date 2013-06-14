@@ -9,7 +9,7 @@
  
 #include <ctime>
 #include <iostream>
-#include "common/TimeUtilities.h"
+#include "TimeUtilities.h"
 #include "PCTimeSource.h"
 
 uint32_t PCTimeSource::getSecondsSinceEpoch(void) const

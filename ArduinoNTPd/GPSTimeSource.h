@@ -9,14 +9,20 @@
 #ifndef GPS_TIMESOURCE_H
 #define GPS_TIMESOURCE_H
 
+#if defined(ARDUINO)
+#include "Arduino.h"
+#else
+#define micros() (0)
+#define interrupts() 
+#define noInterrupts()
+#endif // defined(ARDUINO)
+
 // Uncomment the below to take advantage of the PPS output of the EM-406.
 // This will allow more accurate results to be sent to clients.
 // See http://arduino.cc/en/Reference/AttachInterrupt for the correct value here.
-#define PPS_INTERRUPT_LINE 4
-
 #if defined(ARDUINO)
-#include "Arduino.h"
-#endif // defined(ARDUINO)
+#define PPS_INTERRUPT_LINE 4
+#endif
 
 #include <TinyGPS.h>
 #include "ITimeSource.h"
