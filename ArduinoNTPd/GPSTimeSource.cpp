@@ -50,7 +50,7 @@ bool GPSTimeSource::updateTime(void)
         correctFractionalSeconds = true;
     }
     
-    //while (!hasLocked_)
+    while (!hasLocked_)
     {
         while (dataSource_.available())
         {
@@ -76,7 +76,6 @@ bool GPSTimeSource::updateTime(void)
                     if (tempSeconds != secondsSinceEpoch_)
                     {
                         secondsSinceEpoch_ = tempSeconds;
-                    
                         millisecondsOfLastUpdate_ = micros();
                         hasLocked_ = true;
                     }
@@ -93,26 +92,36 @@ bool GPSTimeSource::updateTime(void)
         }
     }
     
-    noInterrupts();
     if (correctFractionalSeconds)
     {
-        // No GPS update yet. Calculate new fractional value based on system runtime
+        noInterrupts();
+        
+        // Calculate new fractional value based on system runtime
         // since the EM-406 does not seem to return anything other than whole seconds.
         uint32_t millisecondDifference = micros() - millisecondsOfLastUpdate_;
 
+#ifndef PPS_INTERRUPT_LINE
         secondsSinceEpoch_ += (millisecondDifference / 1000000);
+#endif
+
+        uint32_t tempFract = fractionalSecondsSinceEpoch_ + (millisecondDifference % 1000000) * (0xFFFFFFFF / 1000000);
         
-        uint32_t tempFract = fractionalSecondsSinceEpoch_ + (millisecondDifference % 1000000) * (0xFFFFFF / 1000000);
         if (tempFract < fractionalSecondsSinceEpoch_)
         {
+#ifndef PPS_INTERRUPT_LINE
             // overflow
             secondsSinceEpoch_++;
+#else
+            tempFract = 0xFFFFFFFF;
+#endif
         }
-        
+
         fractionalSecondsSinceEpoch_ = tempFract;
+#ifndef PPS_INTERRUPT_LINE
         millisecondsOfLastUpdate_ = micros();
+#endif
+        interrupts();
     }
-    interrupts();
-    
+
     return true;
 }
