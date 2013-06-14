@@ -33,8 +33,9 @@ public:
         serialPort_.write("$PSRF103,01,00,01*09\r\n");
         serialPort_.write("$PSRF103,02,00,01*0A\r\n");
         serialPort_.write("$PSRF103,03,00,01*0B\r\n");
-        serialPort_.write("$PSRF103,04,01,01*0D\r\n");
+        serialPort_.write("$PSRF103,04,00,01*0C\r\n");
         serialPort_.write("$PSRF103,05,00,01*0D\r\n");
+        serialPort_.write("$PSRF103,08,00,01,00*2C\r\n");
     }
     
     /*
