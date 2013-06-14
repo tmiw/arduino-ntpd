@@ -36,9 +36,11 @@ int main(void)
     
     while(true)
     {
-        gps.updateTime();
-        std::cout << "secs since 1900: " << gps.getSecondsSinceEpoch() << std::endl;
-        sleep(1);
+        if (gps.updateTime())
+        {
+            std::cout << "secs since 1900: " << gps.getSecondsSinceEpoch() << std::endl;
+            sleep(1);
+        }
     }
     
     return 0;

@@ -44,13 +44,17 @@ uint32_t GPSTimeSource::getFractionalSecondsSinceEpoch(void) const
 bool GPSTimeSource::updateTime(void)
 {
     bool correctFractionalSeconds = false;
-    
+
+#ifdef PPS_INTERRUPT_LINE
     if (hasLocked_)
+#endif
     {
         correctFractionalSeconds = true;
     }
-    
+
+#ifdef PPS_INTERRUPT_LINE    
     while (!hasLocked_)
+#endif
     {
         while (dataSource_.available())
         {

@@ -19,7 +19,7 @@ bool SimulatedNMEADataSource::available()
         // Generate new data string.
         time_t currentTime;
         struct tm *timeStruct;
-        time(&currentTime);
+        currentTime = time(NULL);
         timeStruct = gmtime(&currentTime);
         
         unsigned char checksum = 0;
