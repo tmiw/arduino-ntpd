@@ -32,7 +32,8 @@ public:
     GPSTimeSource(IDataSource &dataSource)
         : dataSource_(dataSource),
           secondsSinceEpoch_(0),
-          fractionalSecondsSinceEpoch_(0)
+          fractionalSecondsSinceEpoch_(0),
+          hasLocked_(false)
     {
         // empty
     }
@@ -71,6 +72,7 @@ private:
     uint32_t secondsSinceEpoch_;
     uint32_t fractionalSecondsSinceEpoch_;
     uint32_t millisecondsOfLastUpdate_;
+    bool hasLocked_;
     
 #ifdef PPS_INTERRUPT_LINE
     static void PpsInterrupt_();
