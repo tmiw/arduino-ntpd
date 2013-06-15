@@ -7,12 +7,14 @@ using time data from GPS satellites.
 Prerequisites
 -------------------------
 * [Arduino board] [1] -- TODO: compatibility list.
-* [GPS shield] [2] with appropriate [GPS module] [3] that outputs NMEA data.
+* [GPS shield] [2] with appropriate [GPS module] [3] that outputs NMEA data. Tested with EM-406.
 * Ethernet shield.
 
 User's Guide
 -------------------------
-Coming soon.
+* Open sketch in the Arduino IDE.
+* Verify that everything in ArduinoNTPd/config.cpp and config.h look okay.
+* Upload sketch to board (right arrow button at the upper-left).
 
 Licensing
 -------------------------
