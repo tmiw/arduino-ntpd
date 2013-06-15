@@ -19,13 +19,13 @@ public:
      * Returns the number of seconds since the epoch (defined currently as
      * 1 January 1900 00:00 UTC per the NTP specification.)
      */
-    virtual uint32_t getSecondsSinceEpoch(void) const = 0;
+    virtual uint32_t getSecondsSinceEpoch(void) = 0;
     
     /*
      * Returns the number of fractions of a second. 0xFFFFFFFF/1000
      * would correspond to one millisecond, for example.
      */
-    virtual uint32_t getFractionalSecondsSinceEpoch(void) const = 0;
+    virtual uint32_t getFractionalSecondsSinceEpoch(void) = 0;
     
     /* 
      * Grabs latest time from the time source.

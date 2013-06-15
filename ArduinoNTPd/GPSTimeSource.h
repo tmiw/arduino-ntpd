@@ -53,13 +53,13 @@ public:
      * Returns the number of seconds since the epoch (defined currently as
      * 1 January 1900 00:00 UTC per the NTP specification.)
      */
-    virtual uint32_t getSecondsSinceEpoch(void) const;
+    virtual uint32_t getSecondsSinceEpoch(void);
     
     /*
      * Returns the number of fractions of a second. 0xFFFFFFFF/1000
      * would correspond to one millisecond, for example.
      */
-    virtual uint32_t getFractionalSecondsSinceEpoch(void) const;
+    virtual uint32_t getFractionalSecondsSinceEpoch(void);
     
     /* 
      * Grabs latest time from the time source.
@@ -83,6 +83,8 @@ private:
 #ifdef PPS_INTERRUPT_LINE
     static void PpsInterrupt_();
 #endif // PPS_INTERRUPT_LINE
+
+    void updateFractionalSeconds_();
 };
 
 #endif // GPS_TIMESOURCE_H

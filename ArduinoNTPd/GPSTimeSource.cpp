@@ -31,14 +31,47 @@ void GPSTimeSource::PpsInterrupt_()
 }
 #endif // PPS_INTERRUPT_LINE
 
-uint32_t GPSTimeSource::getSecondsSinceEpoch(void) const
+uint32_t GPSTimeSource::getSecondsSinceEpoch(void)
 {
+    updateFractionalSeconds_();
     return secondsSinceEpoch_;
 }
 
-uint32_t GPSTimeSource::getFractionalSecondsSinceEpoch(void) const
+uint32_t GPSTimeSource::getFractionalSecondsSinceEpoch(void)
 {
+    updateFractionalSeconds_();
     return fractionalSecondsSinceEpoch_;
+}
+
+void GPSTimeSource::updateFractionalSeconds_(void)
+{
+    noInterrupts();
+        
+    // Calculate new fractional value based on system runtime
+    // since the EM-406 does not seem to return anything other than whole seconds.
+    uint32_t millisecondDifference = micros() - millisecondsOfLastUpdate_;
+
+#ifndef PPS_INTERRUPT_LINE
+    secondsSinceEpoch_ += (millisecondDifference / 1000000);
+#endif
+
+    uint32_t tempFract = fractionalSecondsSinceEpoch_ + (millisecondDifference % 1000000) * (0xFFFFFFFF / 1000000);
+        
+    if (tempFract < fractionalSecondsSinceEpoch_)
+    {
+#ifndef PPS_INTERRUPT_LINE
+        // overflow
+        secondsSinceEpoch_++;
+#else
+        tempFract = 0xFFFFFFFF;
+#endif
+    }
+
+    fractionalSecondsSinceEpoch_ = tempFract;
+#ifndef PPS_INTERRUPT_LINE
+    millisecondsOfLastUpdate_ = micros();
+#endif
+    interrupts();
 }
 
 bool GPSTimeSource::updateTime(void)
@@ -96,36 +129,5 @@ bool GPSTimeSource::updateTime(void)
         }
     }
     
-    if (correctFractionalSeconds)
-    {
-        noInterrupts();
-        
-        // Calculate new fractional value based on system runtime
-        // since the EM-406 does not seem to return anything other than whole seconds.
-        uint32_t millisecondDifference = micros() - millisecondsOfLastUpdate_;
-
-#ifndef PPS_INTERRUPT_LINE
-        secondsSinceEpoch_ += (millisecondDifference / 1000000);
-#endif
-
-        uint32_t tempFract = fractionalSecondsSinceEpoch_ + (millisecondDifference % 1000000) * (0xFFFFFFFF / 1000000);
-        
-        if (tempFract < fractionalSecondsSinceEpoch_)
-        {
-#ifndef PPS_INTERRUPT_LINE
-            // overflow
-            secondsSinceEpoch_++;
-#else
-            tempFract = 0xFFFFFFFF;
-#endif
-        }
-
-        fractionalSecondsSinceEpoch_ = tempFract;
-#ifndef PPS_INTERRUPT_LINE
-        millisecondsOfLastUpdate_ = micros();
-#endif
-        interrupts();
-    }
-
     return true;
 }
