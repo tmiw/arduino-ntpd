@@ -16,13 +16,14 @@
 #include <EthernetUdp.h>
 
 #include "config.h"
+#include "NTPServer.h"
 #include "SerialDataSource.h"
 #include "GPSTimeSource.h"
 #include "NTPPacket.h"
 
 SerialDataSource dataSource;
 GPSTimeSource timeSource(dataSource);
-EthernetUDP ntpUdp;
+NtpServer timeServer(timeSource);
 
 void setup()
 {
@@ -32,7 +33,7 @@ void setup()
     
     // Set up network.
     Ethernet.begin(macAddress, ipAddress);
-    ntpUdp.begin(NTP_PORT);
+    timeServer.beginListening();
     
     // Enable GPS interrupts.
     timeSource.enableInterrupts();
@@ -41,54 +42,7 @@ void setup()
 void loop()
 {
     timeSource.updateTime();
-    
-    int packetDataSize = ntpUdp.parsePacket();
-    if (packetDataSize && packetDataSize >= NtpPacket::PACKET_SIZE)
-    {
-        // Received what is probably an NTP packet. Read it in and verify
-        // that it's legit.
-        NtpPacket packet;
-        ntpUdp.read((char*)&packet, NtpPacket::PACKET_SIZE);
-        // TODO: verify packet.
-        
-        // We need the time we've received the packet in our response.
-        uint32_t recvSecs = timeSource.getSecondsSinceEpoch();
-        uint32_t recvFract = timeSource.getFractionalSecondsSinceEpoch();
-        
-        // Populate response.
-        packet.swapEndian();        
-        packet.leapIndicator(0);
-        packet.versionNumber(4);
-        packet.mode(4);
-        packet.stratum = 1;
-        packet.poll = 10; // 6-10 per RFC 5905.
-        packet.precision = -18; // ~one microsecond precision.
-        packet.rootDelay = 0; //60 * (0xFFFF / 1000); // ~60 milliseconds, TBD
-        packet.rootDispersion = 0; //10 * (0xFFFF / 1000); // ~10 millisecond dispersion, TBD
-        packet.referenceId[0] = 'G';
-        packet.referenceId[1] = 'P';
-        packet.referenceId[2] = 'S';
-        packet.referenceId[3] = 0;
-        packet.referenceTimestampSeconds = timeSource.getSecondsSinceEpoch();
-        packet.referenceTimestampFraction = timeSource.getFractionalSecondsSinceEpoch();
-        packet.originTimestampSeconds = packet.transmitTimestampSeconds;
-        packet.originTimestampFraction = packet.transmitTimestampFraction;
-        packet.receiveTimestampSeconds = recvSecs;
-        packet.receiveTimestampFraction = recvFract;
-        
-        // ...and the transmit time.
-        packet.transmitTimestampSeconds = timeSource.getSecondsSinceEpoch();
-        packet.transmitTimestampFraction = timeSource.getFractionalSecondsSinceEpoch();
-        
-        // Now transmit the response to the client.
-        packet.swapEndian();
-        ntpUdp.beginPacket(ntpUdp.remoteIP(), ntpUdp.remotePort());
-        for (int count = 0; count < NtpPacket::PACKET_SIZE; count++)
-        {
-            ntpUdp.write(packet.packet()[count]);
-        }
-        ntpUdp.endPacket();
-    }
+    timeServer.processOneRequest();
 }
 
 #endif // defined(ARDUINO)

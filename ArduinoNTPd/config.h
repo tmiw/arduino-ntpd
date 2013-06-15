@@ -9,6 +9,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#if defined(ARDUINO)
+
 #include <Ethernet.h>
 
 // ----------------------------------------------------------------------------------
@@ -40,5 +42,7 @@ extern byte macAddress[];
 
 // TX pin for the GPS receiver/shield.
 #define GPS_TX_PIN 12
+
+#endif // defined(ARDUINO)
 
 #endif // CONFIG_H
