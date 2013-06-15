@@ -17,14 +17,8 @@
 #define noInterrupts()
 #endif // defined(ARDUINO)
 
-// Uncomment the below to take advantage of the PPS output of the EM-406.
-// This will allow more accurate results to be sent to clients.
-// See http://arduino.cc/en/Reference/AttachInterrupt for the correct value here.
-#if defined(ARDUINO)
-#define PPS_INTERRUPT_LINE 4
-#endif
-
 #include <TinyGPS.h>
+#include "config.h"
 #include "ITimeSource.h"
 #include "IDataSource.h"
 

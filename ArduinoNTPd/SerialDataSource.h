@@ -14,16 +14,13 @@
 #include "Arduino.h"
 #include <SoftwareSerial.h>
 #include "IDataSource.h"
-
-// TODO: move to a config.h or something.
-#define RX_PIN 11
-#define TX_PIN 12
+#include "config.h"
 
 class SerialDataSource : public IDataSource
 {
 public:
     SerialDataSource()
-        : serialPort_(RX_PIN, TX_PIN)
+        : serialPort_(GPS_RX_PIN, GPS_TX_PIN)
     {
         // GPS module needs 4800 baud.
         serialPort_.begin(4800);

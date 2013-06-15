@@ -14,14 +14,11 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <EthernetUdp.h>
+
+#include "config.h"
 #include "SerialDataSource.h"
 #include "GPSTimeSource.h"
 #include "NTPPacket.h"
-
-// TODO: put these in a config.h or something. Or maybe read from the EEPROM.
-IPAddress ipAddress(192, 168, 0, 100);
-byte macAddress[] = { 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff };
-#define NTP_PORT 123
 
 SerialDataSource dataSource;
 GPSTimeSource timeSource(dataSource);
@@ -43,13 +40,7 @@ void setup()
 
 void loop()
 {
-    if (timeSource.updateTime())
-    {
-        /*Serial.print("Secs since 1900: ");
-        Serial.print(timeSource.getSecondsSinceEpoch());
-        Serial.print(".");
-        Serial.println(timeSource.getFractionalSecondsSinceEpoch());*/
-    }
+    timeSource.updateTime();
     
     int packetDataSize = ntpUdp.parsePacket();
     if (packetDataSize && packetDataSize >= NtpPacket::PACKET_SIZE)
