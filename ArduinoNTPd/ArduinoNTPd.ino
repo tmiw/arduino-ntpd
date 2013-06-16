@@ -20,10 +20,21 @@
 #include "SerialDataSource.h"
 #include "GPSTimeSource.h"
 #include "NTPPacket.h"
+#include "HTTPServer.h"
+
+void rootPage(HttpServer *server)
+{
+    server->responseOK();
+    server->println("hello world!");
+}
+
+char *urls[] = {"/"};
+UrlHandler handlers[] = {rootPage};
 
 SerialDataSource dataSource;
 GPSTimeSource timeSource(dataSource);
 NtpServer timeServer(timeSource);
+HttpServer httpServer(urls, handlers, 1);
 
 void setup()
 {
@@ -34,7 +45,8 @@ void setup()
     // Set up network.
     Ethernet.begin(macAddress, ipAddress);
     timeServer.beginListening();
-    
+    httpServer.beginListening();
+
     // Enable GPS interrupts.
     timeSource.enableInterrupts();
 }
@@ -43,6 +55,7 @@ void loop()
 {
     timeSource.updateTime();
     timeServer.processOneRequest();
+	httpServer.processOneRequest();
 }
 
 #endif // defined(ARDUINO)

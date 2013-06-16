@@ -29,6 +29,10 @@ extern byte macAddress[];
 // need to be changed.
 #define NTP_PORT 123
 
+// The port to run the built-in HTTP server on. This should not normally
+// need to be changed.
+#define HTTP_SERVER_PORT 80
+
 // Uncomment the below to take advantage of the PPS output of the EM-406.
 // This will allow more accurate results to be sent to clients.
 // See http://arduino.cc/en/Reference/AttachInterrupt for the correct value here.
