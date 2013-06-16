@@ -86,11 +86,11 @@ void HttpServer::routeRequest_()
         bool found = false;
         for (int index = 0; index < numUrls_; index++)
         {
-            if (requestPath_ == String(validUrls_[index]))
+            if (requestPath_ == urlHandlers_[index].path)
             {
                 // Let valid handler handle this request.
                 found = true;
-                (*urlHandlers_[index])(this);
+                (*urlHandlers_[index].function)(this);
             }
         }
         

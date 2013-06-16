@@ -37,11 +37,11 @@ void rootPage(HttpServer *server)
     server->print("<br/>");
 }
 
-char *urls[] = {"/"};
-UrlHandler handlers[] = {rootPage};
+UrlHandler handlers[] = {
+    UrlHandler("/", rootPage),
+};
 
-
-HttpServer httpServer(urls, handlers, 1);
+HttpServer httpServer(handlers, 1);
 
 void setup()
 {

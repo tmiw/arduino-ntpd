@@ -13,14 +13,22 @@
 #include "config.h"
 
 class HttpServer;
-typedef void (*UrlHandler)(HttpServer *server);
+typedef void (*UrlHandlerFn)(HttpServer *server);
+
+struct UrlHandler
+{
+    UrlHandler(char *p, UrlHandlerFn fn)
+        : path(p), function(fn) { }
+        
+    char *path;
+    UrlHandlerFn function;
+};
 
 class HttpServer
 {
 public:
-    HttpServer(char **urls, UrlHandler *handlers, int count)
-        : validUrls_(urls),
-          urlHandlers_(handlers),
+    HttpServer(UrlHandler *handlers, int count)
+        : urlHandlers_(handlers),
           numUrls_(count),
           seenBlankLine_(false),
           currentSplit_(0),
@@ -70,7 +78,6 @@ public:
 private:
     EthernetServer httpServerPort_;
     EthernetClient currentClient_;
-    char **validUrls_;
     UrlHandler *urlHandlers_;
     int numUrls_;
     bool seenBlankLine_;
