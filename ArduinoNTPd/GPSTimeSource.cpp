@@ -23,10 +23,12 @@ void GPSTimeSource::enableInterrupts()
 #ifdef PPS_INTERRUPT_LINE
 void GPSTimeSource::PpsInterrupt_()
 {
+    uint32_t currentTime = micros();
+    Singleton_->microsecondsPerSecond_ = currentTime - Singleton_->millisecondsOfLastUpdate_;
     noInterrupts();
     Singleton_->secondsSinceEpoch_++;
     Singleton_->fractionalSecondsSinceEpoch_ = 0;
-    Singleton_->millisecondsOfLastUpdate_ = micros();
+    Singleton_->millisecondsOfLastUpdate_ = currentTime;
     interrupts();
 }
 #endif // PPS_INTERRUPT_LINE
@@ -57,10 +59,10 @@ void GPSTimeSource::updateFractionalSeconds_(void)
     uint32_t millisecondDifference = lastTime - millisecondsOfLastUpdate_;
 
 #ifndef PPS_INTERRUPT_LINE
-    secondsSinceEpoch_ += (millisecondDifference / 1000000);
+    secondsSinceEpoch_ += (millisecondDifference / microsecondsPerSecond_);
 #endif
 
-    uint32_t tempFract = fractionalSecondsSinceEpoch_ + (millisecondDifference % 1000000) * (0xFFFFFFFF / 1000000);
+    uint32_t tempFract = fractionalSecondsSinceEpoch_ + (millisecondDifference % microsecondsPerSecond_) * (0xFFFFFFFF / microsecondsPerSecond_);
         
     if (tempFract < fractionalSecondsSinceEpoch_)
     {
@@ -81,7 +83,7 @@ void GPSTimeSource::updateFractionalSeconds_(void)
 bool GPSTimeSource::updateTime(void)
 {
 #ifdef PPS_INTERRUPT_LINE    
-    while (!hasLocked_)
+    //while (!hasLocked_)
 #endif
     {
         while (dataSource_.available())
@@ -89,6 +91,7 @@ bool GPSTimeSource::updateTime(void)
             int c = dataSource_.read();
             if (gps_.encode(c))
             {
+                noInterrupts();
                 // Grab time from now-valid data.
                 int year;
                 byte month, day, hour, minutes, second, hundredths;
@@ -108,7 +111,9 @@ bool GPSTimeSource::updateTime(void)
                     if (tempSeconds != secondsSinceEpoch_)
                     {
                         secondsSinceEpoch_ = tempSeconds;
+#ifndef PPS_INTERRUPT_LINE
                         millisecondsOfLastUpdate_ = micros();
+#endif
                         hasLocked_ = true;
                     }
                 }
@@ -120,6 +125,7 @@ bool GPSTimeSource::updateTime(void)
                     fractionalSecondsSinceEpoch_ = 0;
                     millisecondsOfLastUpdate_ = micros();
                 }
+                interrupts();
             }
         }
     }

@@ -23,6 +23,10 @@ void NtpServer::beginListening()
 
 void NtpServer::processOneRequest()
 {
+    // We need the time we've received the packet in our response.
+    uint32_t recvSecs = timeSource_.getSecondsSinceEpoch();
+    uint32_t recvFract = timeSource_.getFractionalSecondsSinceEpoch();
+        
     int packetDataSize = timeServerPort_.parsePacket();
     if (packetDataSize && packetDataSize >= NtpPacket::PACKET_SIZE)
     {
@@ -31,10 +35,6 @@ void NtpServer::processOneRequest()
         NtpPacket packet;
         timeServerPort_.read((char*)&packet, NtpPacket::PACKET_SIZE);
         // TODO: verify packet.
-        
-        // We need the time we've received the packet in our response.
-        uint32_t recvSecs = timeSource_.getSecondsSinceEpoch();
-        uint32_t recvFract = timeSource_.getFractionalSecondsSinceEpoch();
         
         // Populate response.
         packet.swapEndian();        
