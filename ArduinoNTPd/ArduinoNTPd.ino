@@ -22,18 +22,25 @@
 #include "NTPPacket.h"
 #include "HTTPServer.h"
 
+SerialDataSource dataSource;
+GPSTimeSource timeSource(dataSource);
+NtpServer timeServer(timeSource);
+
 void rootPage(HttpServer *server)
 {
     server->responseOK();
-    server->println("hello world!");
+    server->print("Seconds since 1900: ");
+    server->print(timeSource.getSecondsSinceEpoch());
+    server->print("<br/>");
+    server->print("Fractional seconds since 1900: ");
+    server->print(timeSource.getFractionalSecondsSinceEpoch());
+    server->print("<br/>");
 }
 
 char *urls[] = {"/"};
 UrlHandler handlers[] = {rootPage};
 
-SerialDataSource dataSource;
-GPSTimeSource timeSource(dataSource);
-NtpServer timeServer(timeSource);
+
 HttpServer httpServer(urls, handlers, 1);
 
 void setup()
