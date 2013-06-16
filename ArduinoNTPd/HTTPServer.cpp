@@ -78,6 +78,21 @@ void HttpServer::processOneRequest()
     }
 }
 
+void HttpServer::responseRedirect(char *url)
+{
+    currentClient_.println("HTTP/1.0 302 Found");
+    currentClient_.print("Location: ");
+    currentClient_.println(url);
+    currentClient_.println("Connection: close");
+    currentClient_.println("Content-Type: text/html");
+    currentClient_.println();
+    currentClient_.print("See <a href=\"");
+    currentClient_.print(url);
+    currentClient_.print("\">");
+    currentClient_.print(url);
+    currentClient_.println("</a> for new location.");
+}
+
 void HttpServer::routeRequest_()
 {
     // We only support GET requests.

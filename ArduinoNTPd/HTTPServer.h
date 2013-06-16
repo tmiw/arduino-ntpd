@@ -48,6 +48,11 @@ public:
     void processOneRequest();
     
     /*
+     * Redirects the user to a new URL.
+     */
+    void responseRedirect(char *url);
+    
+    /*
      * Send OK response to client.
      */
     void responseOK()

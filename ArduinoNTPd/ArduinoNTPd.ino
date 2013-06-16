@@ -28,6 +28,11 @@ NtpServer timeServer(timeSource);
 
 void rootPage(HttpServer *server)
 {
+    server->responseRedirect("/time");
+}
+
+void timePage(HttpServer *server)
+{
     server->responseOK();
     server->print("Seconds since 1900: ");
     server->print(timeSource.getSecondsSinceEpoch());
@@ -39,9 +44,10 @@ void rootPage(HttpServer *server)
 
 UrlHandler handlers[] = {
     UrlHandler("/", rootPage),
+    UrlHandler("/time", timePage),
 };
 
-HttpServer httpServer(handlers, 1);
+HttpServer httpServer(handlers, 2);
 
 void setup()
 {
