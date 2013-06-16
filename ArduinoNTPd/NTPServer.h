@@ -20,7 +20,14 @@ public:
         // empty
     }
     
+    /*
+     * Begins listening for NTP requests.
+     */
     void beginListening(void);
+    
+    /*
+     * Processes a single NTP request.
+     */
     void processOneRequest(void);
     
 private:
