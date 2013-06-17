@@ -25,11 +25,9 @@ void GPSTimeSource::PpsInterrupt_()
 {
     uint32_t currentTime = micros();
     Singleton_->microsecondsPerSecond_ = currentTime - Singleton_->millisecondsOfLastUpdate_;
-    noInterrupts();
     Singleton_->secondsSinceEpoch_++;
     Singleton_->fractionalSecondsSinceEpoch_ = 0;
     Singleton_->millisecondsOfLastUpdate_ = currentTime;
-    interrupts();
 }
 #endif // PPS_INTERRUPT_LINE
 

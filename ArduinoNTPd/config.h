@@ -37,7 +37,7 @@ extern byte macAddress[];
 // This will allow more accurate results to be sent to clients.
 // See http://arduino.cc/en/Reference/AttachInterrupt for the correct value here.
 #if defined(ARDUINO)
-#define PPS_INTERRUPT_LINE 4
+#define PPS_INTERRUPT_LINE 2
 #endif
 
 // RX pin for the GPS receiver/shield. This should support change interrupts
