@@ -64,7 +64,7 @@ public:
     /*
      * Enables interrupts.
      */
-    void enableInterrupts();    
+    void enableInterrupts();
 private:
     static GPSTimeSource *Singleton_;
     
