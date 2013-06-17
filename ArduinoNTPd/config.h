@@ -33,12 +33,8 @@ extern byte macAddress[];
 // need to be changed.
 #define HTTP_SERVER_PORT 80
 
-// Uncomment the below to take advantage of the PPS output of the EM-406.
-// This will allow more accurate results to be sent to clients.
-// See http://arduino.cc/en/Reference/AttachInterrupt for the correct value here.
-#if defined(ARDUINO)
-#define PPS_INTERRUPT_LINE 2
-#endif
+// The pin that the timer uses to capture the interrupt.
+#define PPS_PIN 49
 
 // RX pin for the GPS receiver/shield. This should support change interrupts
 // per NewSoftSerial documentation.

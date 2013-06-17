@@ -53,6 +53,8 @@ public:
      * Enables interrupts.
      */
     void enableInterrupts();
+    
+    static void PpsInterruptNew();
 private:
     static GPSTimeSource *Singleton_;
     
@@ -63,10 +65,6 @@ private:
     uint32_t millisecondsOfLastUpdate_;
     uint32_t microsecondsPerSecond_;
     bool hasLocked_;
-    
-#ifdef PPS_INTERRUPT_LINE
-    static void PpsInterrupt_();
-#endif // PPS_INTERRUPT_LINE
 
     void updateFractionalSeconds_();
 };

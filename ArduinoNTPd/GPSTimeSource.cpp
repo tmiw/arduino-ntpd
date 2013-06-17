@@ -10,51 +10,54 @@
 #include "TimeUtilities.h"
 
 GPSTimeSource *GPSTimeSource::Singleton_ = NULL;
+volatile uint32_t overflows = 0;
 
 void GPSTimeSource::enableInterrupts()
 {
-#ifdef PPS_INTERRUPT_LINE
     Singleton_ = this;
-    attachInterrupt(PPS_INTERRUPT_LINE, PpsInterrupt_, RISING);
+    pinMode(PPS_PIN, INPUT);
+    
+    TCCR4A = 0 ;                    // Normal counting mode
+    TCCR4B = B010;                  // set prescale bits
+    TCCR4B |= _BV(ICES4);           // enable input capture
+    TIMSK4 |= _BV(ICIE4);           // enable input capture interrupt for timer 4
+    TIMSK4 |= _BV(TOIE4);           // overflow interrupt
+    
     Serial.println("interrupts enabled");
-#endif // PPS_INTERRUPT_LINE
 }
 
-#ifdef PPS_INTERRUPT_LINE
-void GPSTimeSource::PpsInterrupt_()
+void GPSTimeSource::PpsInterruptNew()
 {
-    noInterrupts();
-    uint32_t currentTime = micros();
-    Singleton_->microsecondsPerSecond_ = currentTime - Singleton_->millisecondsOfLastUpdate_;
-    Singleton_->secondsSinceEpoch_++;
-    Singleton_->fractionalSecondsSinceEpoch_ = 0;
-    Singleton_->millisecondsOfLastUpdate_ = currentTime;
-    interrupts();
+    // Get saved time value.
+    uint32_t tmrVal = (overflows << 16) | ICR4;
+    
+    GPSTimeSource::Singleton_->microsecondsPerSecond_ = tmrVal - Singleton_->millisecondsOfLastUpdate_;
+    GPSTimeSource::Singleton_->secondsSinceEpoch_++;
+    GPSTimeSource::Singleton_->fractionalSecondsSinceEpoch_ = 0;
+    GPSTimeSource::Singleton_->millisecondsOfLastUpdate_ = tmrVal;
 }
-#endif // PPS_INTERRUPT_LINE
+
+ISR(TIMER4_OVF_vect)
+{
+    ++overflows;
+}
+
+ISR(TIMER4_CAPT_vect)
+{
+    GPSTimeSource::PpsInterruptNew();
+}
 
 void GPSTimeSource::updateFractionalSeconds_(void)
 {
     // Calculate new fractional value based on system runtime
     // since the EM-406 does not seem to return anything other than whole seconds.
-    uint32_t lastTime = micros();
+    uint32_t lastTime = (overflows << 16) | TCNT4;
     uint32_t millisecondDifference = lastTime - millisecondsOfLastUpdate_;
     fractionalSecondsSinceEpoch_ = (millisecondDifference % microsecondsPerSecond_) * (0xFFFFFFFF / microsecondsPerSecond_);
-#ifndef PPS_INTERRUPT_LINE
-    if (millisecondDifference >= microsecondsPerSecond_)
-    {
-        secondsSinceEpoch_ += millisecondDifference / microsecondsPerSecond_;
-    }
-#endif
 }
 
 void GPSTimeSource::now(uint32_t *secs, uint32_t *fract)
 {
-    noInterrupts();
-    
-#ifdef PPS_INTERRUPT_LINE    
-    //while (!hasLocked_)
-#endif
     {
         while (dataSource_.available())
         {
@@ -80,7 +83,6 @@ void GPSTimeSource::now(uint32_t *secs, uint32_t *fract)
                     if (tempSeconds != secondsSinceEpoch_)
                     {
                         secondsSinceEpoch_ = tempSeconds;
-                        millisecondsOfLastUpdate_ = micros();
                         hasLocked_ = true;
                     }
                 }
@@ -90,7 +92,6 @@ void GPSTimeSource::now(uint32_t *secs, uint32_t *fract)
                     // TODO: does the interface need an accessor for "invalid time"?
                     secondsSinceEpoch_ = 0;
                     fractionalSecondsSinceEpoch_ = 0;
-                    millisecondsOfLastUpdate_ = micros();
                 }
             }
         }
@@ -106,6 +107,4 @@ void GPSTimeSource::now(uint32_t *secs, uint32_t *fract)
     {
         *fract = fractionalSecondsSinceEpoch_;
     }
-    
-    interrupts();
 }
