@@ -34,7 +34,6 @@ void GPSTimeSource::PpsInterrupt_()
 uint32_t GPSTimeSource::getSecondsSinceEpoch(void)
 {
     noInterrupts();
-    updateFractionalSeconds_();
     uint32_t secs = secondsSinceEpoch_;
     interrupts();
     return secs;
@@ -43,7 +42,6 @@ uint32_t GPSTimeSource::getSecondsSinceEpoch(void)
 uint32_t GPSTimeSource::getFractionalSecondsSinceEpoch(void)
 {
     noInterrupts();
-    updateFractionalSeconds_();
     uint32_t fract = fractionalSecondsSinceEpoch_;
     interrupts();
     return fract;
@@ -78,8 +76,10 @@ void GPSTimeSource::updateFractionalSeconds_(void)
 #endif
 }
 
-bool GPSTimeSource::updateTime(void)
+void GPSTimeSource::now(uint32_t *secs, uint32_t *fract)
 {
+    noInterrupts();
+    
 #ifdef PPS_INTERRUPT_LINE    
     //while (!hasLocked_)
 #endif
@@ -89,7 +89,6 @@ bool GPSTimeSource::updateTime(void)
             int c = dataSource_.read();
             if (gps_.encode(c))
             {
-                noInterrupts();
                 // Grab time from now-valid data.
                 int year;
                 byte month, day, hour, minutes, second, hundredths;
@@ -123,10 +122,20 @@ bool GPSTimeSource::updateTime(void)
                     fractionalSecondsSinceEpoch_ = 0;
                     millisecondsOfLastUpdate_ = micros();
                 }
-                interrupts();
             }
         }
     }
     
-    return true;
+    updateFractionalSeconds_();
+    
+    if (secs)
+    {
+        *secs = secondsSinceEpoch_;
+    }
+    if (fract)
+    {
+        *fract = fractionalSecondsSinceEpoch_;
+    }
+    
+    interrupts();
 }

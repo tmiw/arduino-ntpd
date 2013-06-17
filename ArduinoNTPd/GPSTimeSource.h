@@ -59,7 +59,7 @@ public:
     /* 
      * Grabs latest time from the time source.
      */
-    virtual bool updateTime(void);
+    virtual void now(uint32_t *secs, uint32_t *fract);
 
     /*
      * Enables interrupts.

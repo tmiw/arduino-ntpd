@@ -67,7 +67,7 @@ void setup()
 
 void loop()
 {
-    timeSource.updateTime();
+    timeSource.now(NULL, NULL);
     timeServer.processOneRequest();
     httpServer.processOneRequest();
 }

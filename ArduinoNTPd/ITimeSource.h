@@ -14,23 +14,11 @@
 
 class ITimeSource
 {
-public:         
-    /*
-     * Returns the number of seconds since the epoch (defined currently as
-     * 1 January 1900 00:00 UTC per the NTP specification.)
-     */
-    virtual uint32_t getSecondsSinceEpoch(void) = 0;
-    
-    /*
-     * Returns the number of fractions of a second. 0xFFFFFFFF/1000
-     * would correspond to one millisecond, for example.
-     */
-    virtual uint32_t getFractionalSecondsSinceEpoch(void) = 0;
-    
+public:
     /* 
      * Grabs latest time from the time source.
      */
-    virtual bool updateTime(void) = 0;
+    virtual void now(uint32_t *secs, uint32_t *fract) = 0;
 };
 
 #endif // I_TIMESOURCE_H

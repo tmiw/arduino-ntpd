@@ -24,8 +24,8 @@ void NtpServer::beginListening()
 void NtpServer::processOneRequest()
 {
     // We need the time we've received the packet in our response.
-    uint32_t recvSecs = timeSource_.getSecondsSinceEpoch();
-    uint32_t recvFract = timeSource_.getFractionalSecondsSinceEpoch();
+    uint32_t recvSecs, recvFract;
+    timeSource_.now(&recvSecs, &recvFract);
         
     int packetDataSize = timeServerPort_.parsePacket();
     if (packetDataSize && packetDataSize >= NtpPacket::PACKET_SIZE)
@@ -50,16 +50,14 @@ void NtpServer::processOneRequest()
         packet.referenceId[1] = 'P';
         packet.referenceId[2] = 'S';
         packet.referenceId[3] = 0;
-        packet.referenceTimestampSeconds = timeSource_.getSecondsSinceEpoch();
-        packet.referenceTimestampFraction = timeSource_.getFractionalSecondsSinceEpoch();
+        timeSource_.now(&packet.referenceTimestampSeconds, &packet.referenceTimestampFraction);
         packet.originTimestampSeconds = packet.transmitTimestampSeconds;
         packet.originTimestampFraction = packet.transmitTimestampFraction;
         packet.receiveTimestampSeconds = recvSecs;
         packet.receiveTimestampFraction = recvFract;
         
         // ...and the transmit time.
-        packet.transmitTimestampSeconds = timeSource_.getSecondsSinceEpoch();
-        packet.transmitTimestampFraction = timeSource_.getFractionalSecondsSinceEpoch();
+        timeSource_.now(&packet.transmitTimestampSeconds, &packet.transmitTimestampFraction);
         
         // Now transmit the response to the client.
         packet.swapEndian();
