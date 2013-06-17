@@ -43,7 +43,7 @@ void NtpServer::processOneRequest()
         packet.mode(4);
         packet.stratum = 1;
         packet.poll = 10; // 6-10 per RFC 5905.
-        packet.precision = -18; // ~one microsecond precision.
+        packet.precision = -21; // ~0.5 microsecond precision.
         packet.rootDelay = 0; //60 * (0xFFFF / 1000); // ~60 milliseconds, TBD
         packet.rootDispersion = 0; //10 * (0xFFFF / 1000); // ~10 millisecond dispersion, TBD
         packet.referenceId[0] = 'G';
