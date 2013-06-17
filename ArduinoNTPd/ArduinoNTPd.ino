@@ -34,11 +34,13 @@ void rootPage(HttpServer *server)
 void timePage(HttpServer *server)
 {
     server->responseOK();
+    uint32_t secs, fract;
+    timeSource.now(&secs, &fract);
     server->print("Seconds since 1900: ");
-    server->print(timeSource.getSecondsSinceEpoch());
+    server->print(secs);
     server->print("<br/>");
     server->print("Fractional seconds since 1900: ");
-    server->print(timeSource.getFractionalSecondsSinceEpoch());
+    server->print(fract);
     server->print("<br/>");
 }
 
@@ -67,6 +69,7 @@ void setup()
 
 void loop()
 {
+    timeSource.now(NULL, NULL);
     timeServer.processOneRequest();
     httpServer.processOneRequest();
 }

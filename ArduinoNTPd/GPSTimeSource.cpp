@@ -23,29 +23,15 @@ void GPSTimeSource::enableInterrupts()
 #ifdef PPS_INTERRUPT_LINE
 void GPSTimeSource::PpsInterrupt_()
 {
+    noInterrupts();
     uint32_t currentTime = micros();
     Singleton_->microsecondsPerSecond_ = currentTime - Singleton_->millisecondsOfLastUpdate_;
     Singleton_->secondsSinceEpoch_++;
     Singleton_->fractionalSecondsSinceEpoch_ = 0;
     Singleton_->millisecondsOfLastUpdate_ = currentTime;
+    interrupts();
 }
 #endif // PPS_INTERRUPT_LINE
-
-uint32_t GPSTimeSource::getSecondsSinceEpoch(void)
-{
-    noInterrupts();
-    uint32_t secs = secondsSinceEpoch_;
-    interrupts();
-    return secs;
-}
-
-uint32_t GPSTimeSource::getFractionalSecondsSinceEpoch(void)
-{
-    noInterrupts();
-    uint32_t fract = fractionalSecondsSinceEpoch_;
-    interrupts();
-    return fract;
-}
 
 void GPSTimeSource::updateFractionalSeconds_(void)
 {
@@ -53,26 +39,12 @@ void GPSTimeSource::updateFractionalSeconds_(void)
     // since the EM-406 does not seem to return anything other than whole seconds.
     uint32_t lastTime = micros();
     uint32_t millisecondDifference = lastTime - millisecondsOfLastUpdate_;
-
+    fractionalSecondsSinceEpoch_ = (millisecondDifference % microsecondsPerSecond_) * (0xFFFFFFFF / microsecondsPerSecond_);
 #ifndef PPS_INTERRUPT_LINE
-    secondsSinceEpoch_ += (millisecondDifference / microsecondsPerSecond_);
-#endif
-
-    uint32_t tempFract = fractionalSecondsSinceEpoch_ + (millisecondDifference % microsecondsPerSecond_) * (0xFFFFFFFF / microsecondsPerSecond_);
-        
-    if (tempFract < fractionalSecondsSinceEpoch_)
+    if (millisecondDifference >= microsecondsPerSecond_)
     {
-#ifndef PPS_INTERRUPT_LINE
-        // overflow
-        secondsSinceEpoch_++;
-#else
-        tempFract = 0xFFFFFFFF;
-#endif
+        secondsSinceEpoch_ += millisecondDifference / microsecondsPerSecond_;
     }
-
-    fractionalSecondsSinceEpoch_ = tempFract;
-#ifndef PPS_INTERRUPT_LINE
-    millisecondsOfLastUpdate_ = lastTime;
 #endif
 }
 
@@ -108,9 +80,7 @@ void GPSTimeSource::now(uint32_t *secs, uint32_t *fract)
                     if (tempSeconds != secondsSinceEpoch_)
                     {
                         secondsSinceEpoch_ = tempSeconds;
-#ifndef PPS_INTERRUPT_LINE
                         millisecondsOfLastUpdate_ = micros();
-#endif
                         hasLocked_ = true;
                     }
                 }
