@@ -42,10 +42,14 @@ extern byte macAddress[];
 
 // RX pin for the GPS receiver/shield. This should support change interrupts
 // per NewSoftSerial documentation.
-#define GPS_RX_PIN 11
+//#define GPS_RX_PIN 11
 
 // TX pin for the GPS receiver/shield.
-#define GPS_TX_PIN 12
+//#define GPS_TX_PIN 12
+
+// Or uncomment and modify this to use one of the built-in UARTs.
+// (possible choices: Serial1, Serial2, Serial3)
+#define HARDWARE_SERIAL_CLASS Serial1
 
 #endif // defined(ARDUINO)
 

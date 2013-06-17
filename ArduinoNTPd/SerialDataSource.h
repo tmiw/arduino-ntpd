@@ -20,8 +20,23 @@ class SerialDataSource : public IDataSource
 {
 public:
     SerialDataSource()
+#ifndef HARDWARE_SERIAL_CLASS
         : serialPort_(GPS_RX_PIN, GPS_TX_PIN)
+#endif
     {
+        // empty
+    }
+    
+    /*
+     * Starts serial comms.
+     */
+    void begin()
+    {
+        #ifdef HARDWARE_SERIAL_CLASS
+#undef serialPort_
+#define serialPort_ HARDWARE_SERIAL_CLASS
+#endif
+
         // GPS module needs 4800 baud.
         serialPort_.begin(4800);
         
@@ -33,6 +48,10 @@ public:
         serialPort_.write("$PSRF103,04,00,01*0C\r\n");
         serialPort_.write("$PSRF103,05,00,01*0D\r\n");
         serialPort_.write("$PSRF103,08,00,01,00*2C\r\n");
+        
+#ifdef HARDWARE_SERIAL_CLASS
+#undef serialPort_
+#endif
     }
     
     /*
@@ -45,7 +64,9 @@ public:
      */
     virtual int read();
 private:
+#ifndef HARDWARE_SERIAL_CLASS
     SoftwareSerial serialPort_;
+#endif
 };
 
 #endif // defined(ARDUINO)

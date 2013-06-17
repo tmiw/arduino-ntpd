@@ -57,6 +57,7 @@ void setup()
     
     // Set up network.
     Ethernet.begin(macAddress, ipAddress);
+    dataSource.begin();
     timeServer.beginListening();
     httpServer.beginListening();
 
