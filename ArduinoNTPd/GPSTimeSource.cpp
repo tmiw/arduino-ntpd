@@ -31,7 +31,9 @@ void GPSTimeSource::PpsInterruptNew()
     // Get saved time value.
     uint32_t tmrVal = (overflows << 16) | ICR4;
     
-    GPSTimeSource::Singleton_->microsecondsPerSecond_ = tmrVal - Singleton_->millisecondsOfLastUpdate_;
+    GPSTimeSource::Singleton_->microsecondsPerSecond_ = 
+        (GPSTimeSource::Singleton_->microsecondsPerSecond_ + 
+        (tmrVal - Singleton_->millisecondsOfLastUpdate_)) / 2;
     GPSTimeSource::Singleton_->secondsSinceEpoch_++;
     GPSTimeSource::Singleton_->fractionalSecondsSinceEpoch_ = 0;
     GPSTimeSource::Singleton_->millisecondsOfLastUpdate_ = tmrVal;
