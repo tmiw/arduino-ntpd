@@ -60,41 +60,39 @@ void GPSTimeSource::updateFractionalSeconds_(void)
 
 void GPSTimeSource::now(uint32_t *secs, uint32_t *fract)
 {
+    while (dataSource_.available())
     {
-        while (dataSource_.available())
+        int c = dataSource_.read();
+        if (gps_.encode(c))
         {
-            int c = dataSource_.read();
-            if (gps_.encode(c))
-            {
-                // Grab time from now-valid data.
-                int year;
-                byte month, day, hour, minutes, second, hundredths;
-                unsigned long fix_age;
+            // Grab time from now-valid data.
+            int year;
+            byte month, day, hour, minutes, second, hundredths;
+            unsigned long fix_age;
 
-                gps_.crack_datetime(&year, &month, &day,
-                  &hour, &minutes, &second, &hundredths, &fix_age);
-              
-                // We don't want to use the time we've received if 
-                // the fix is invalid.
-                if (fix_age != TinyGPS::GPS_INVALID_AGE && fix_age < 5000 && year >= 2013)
+            gps_.crack_datetime(&year, &month, &day,
+              &hour, &minutes, &second, &hundredths, &fix_age);
+          
+            // We don't want to use the time we've received if 
+            // the fix is invalid.
+            if (fix_age != TinyGPS::GPS_INVALID_AGE && fix_age < 5000 && year >= 2013)
+            {
+                uint32_t tempSeconds = 
+                    TimeUtilities::numberOfSecondsSince1900Epoch(
+                        year, month, day, hour, minutes, second);
+                
+                if (tempSeconds != secondsSinceEpoch_)
                 {
-                    uint32_t tempSeconds = 
-                        TimeUtilities::numberOfSecondsSince1900Epoch(
-                            year, month, day, hour, minutes, second);
-                    
-                    if (tempSeconds != secondsSinceEpoch_)
-                    {
-                        secondsSinceEpoch_ = tempSeconds;
-                        hasLocked_ = true;
-                    }
+                    secondsSinceEpoch_ = tempSeconds;
+                    hasLocked_ = true;
                 }
-                else
-                {
-                    // Set time to 0 if invalid.
-                    // TODO: does the interface need an accessor for "invalid time"?
-                    secondsSinceEpoch_ = 0;
-                    fractionalSecondsSinceEpoch_ = 0;
-                }
+            }
+            else
+            {
+                // Set time to 0 if invalid.
+                // TODO: does the interface need an accessor for "invalid time"?
+                secondsSinceEpoch_ = 0;
+                fractionalSecondsSinceEpoch_ = 0;
             }
         }
     }

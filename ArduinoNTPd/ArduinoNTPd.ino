@@ -21,6 +21,7 @@
 #include "GPSTimeSource.h"
 #include "NTPPacket.h"
 #include "HTTPServer.h"
+#include "TimeUtilities.h"
 
 SerialDataSource dataSource;
 GPSTimeSource timeSource(dataSource);
@@ -31,17 +32,38 @@ void rootPage(HttpServer *server)
     server->responseRedirect("/time");
 }
 
+static void zeroPrepend(HttpServer *server, int val)
+{
+    if (val < 10)
+    {
+        server->print("0");
+    }
+    server->print(val);
+}
+
 void timePage(HttpServer *server)
 {
     server->responseOK();
     uint32_t secs, fract;
     timeSource.now(&secs, &fract);
-    server->print("Seconds since 1900: ");
-    server->print(secs);
+    
+    uint32_t year, month, day, hour, minute, second;
+    TimeUtilities::dateFromNumberOfSeconds(secs, &year, &month, &day, &hour, &minute, &second);
+    
+    server->print("Current date: ");
+    server->print(year);
+    server->print("-");
+    zeroPrepend(server, month);
+    server->print("-");
+    zeroPrepend(server, day);
+    server->print(" ");
+    zeroPrepend(server, hour);
+    server->print(":");
+    zeroPrepend(server, minute);
+    server->print(":");
+    zeroPrepend(server, second);
     server->print("<br/>");
-    server->print("Fractional seconds since 1900: ");
-    server->print(fract);
-    server->print("<br/>");
+    server->print("(All times in UTC.)");
 }
 
 UrlHandler handlers[] = {

@@ -64,6 +64,7 @@ private:
     uint32_t fractionalSecondsSinceEpoch_;
     uint32_t millisecondsOfLastUpdate_;
     uint32_t microsecondsPerSecond_;
+    
     bool hasLocked_;
 
     void updateFractionalSeconds_();

@@ -5,16 +5,100 @@
  * Author: Mooneer Salem <mooneer@gmail.com>
  * License: New BSD License
  */
- 
+
+#include "Arduino.h"
 #include "TimeUtilities.h"
+
+// February is 28 here, but we will account for leap years further down.
+static int numDaysInMonths[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+void TimeUtilities::dateFromNumberOfSeconds(
+    uint32_t secs, uint32_t *year, uint32_t *month, uint32_t *day,
+    uint32_t *hour, uint32_t *minute, uint32_t *second)
+{
+    bool isLeapYear = false;
+    for (uint32_t currentYear = EPOCH_YEAR; ; currentYear++)
+    {
+        int multipleOfFour = (currentYear % 4) == 0;
+        int multipleOfOneHundred = (currentYear % 100) == 0;
+        int multipleOfFourHundred = (currentYear % 400) == 0;        
+        isLeapYear = false;
+        
+        // Formula: years divisble by 4 are leap years, EXCEPT if it's
+        // divisible by 100 and not by 400.
+        if (multipleOfFour && !(multipleOfOneHundred && !multipleOfFourHundred))
+        {
+            isLeapYear = true;
+        }
+        
+        uint32_t secsInYear = (uint32_t)SECONDS_IN_MINUTE * (uint32_t)MINUTES_IN_HOUR * (uint32_t)HOURS_IN_DAY * (uint32_t)(isLeapYear ? (DAYS_IN_YEAR + 1) : DAYS_IN_YEAR);
+        *year = currentYear;
+        if (secs < secsInYear)
+        {
+            break;
+        }
+        
+        secs -= secsInYear;
+    }
+    
+    for (uint32_t currentMonth = 0; ; currentMonth++)
+    {
+        uint32_t secsInMonth = (uint32_t)SECONDS_IN_MINUTE * (uint32_t)MINUTES_IN_HOUR * (uint32_t)HOURS_IN_DAY * (uint32_t)numDaysInMonths[currentMonth];
+        
+        if (currentMonth == 1 && isLeapYear)
+        {
+            secsInMonth += (uint32_t)SECONDS_IN_MINUTE * (uint32_t)MINUTES_IN_HOUR * (uint32_t)HOURS_IN_DAY;
+        }
+        
+        *month = currentMonth + 1;
+        if (secs < secsInMonth)
+        {
+            break;
+        }
+        
+        secs -= secsInMonth;
+    }
+    
+    for (uint32_t currentDay = 0; ; currentDay++)
+    {
+        uint32_t secsInDay = (uint32_t)SECONDS_IN_MINUTE * (uint32_t)MINUTES_IN_HOUR * (uint32_t)HOURS_IN_DAY;
+        *day = currentDay + 1;
+        if (secs < secsInDay)
+        {
+            break;
+        }
+        secs -= secsInDay;
+    }
+    
+    for (uint32_t currentHour = 0; ; currentHour++)
+    {
+        uint32_t secsInHour = (uint32_t)SECONDS_IN_MINUTE * (uint32_t)MINUTES_IN_HOUR;
+        *hour = currentHour;
+        if (secs < secsInHour)
+        {
+            break;
+        }
+        secs -= secsInHour;
+    }
+    
+    for (uint32_t currentMinute = 0; ; currentMinute++)
+    {
+        uint32_t secsInMinute = (uint32_t)SECONDS_IN_MINUTE;
+        *minute = currentMinute;
+        if (secs < secsInMinute)
+        {
+            break;
+        }
+        secs -= secsInMinute;
+    }
+    
+    *second = secs;
+}
 
 uint32_t TimeUtilities::numberOfSecondsSince1900Epoch(
     uint32_t year, uint32_t month, uint32_t day, uint32_t hour, uint32_t minute, uint32_t second)
 {
     uint32_t returnValue = 0;
-    
-    // February is 28 here, but we will account for leap years further down.
-    static int numDaysInMonths[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     
     // Hours, minutes and regular seconds are trivial to add. 
     returnValue = 
