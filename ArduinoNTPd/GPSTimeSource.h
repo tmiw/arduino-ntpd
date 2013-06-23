@@ -54,7 +54,16 @@ public:
      */
     void enableInterrupts();
     
+    /*
+     * Interrupt handler.
+     */
     static void PpsInterruptNew();
+    
+    /*
+     * Retrieves current location.
+     */
+    int32_t latitude() const { return lat_; }
+    int32_t longitude() const { return long_; }
 private:
     static GPSTimeSource *Singleton_;
     
@@ -64,6 +73,9 @@ private:
     uint32_t fractionalSecondsSinceEpoch_;
     uint32_t millisecondsOfLastUpdate_;
     uint32_t microsecondsPerSecond_;
+    
+    int32_t lat_;
+    int32_t long_;
     
     bool hasLocked_;
 

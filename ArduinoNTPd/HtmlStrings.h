@@ -35,9 +35,15 @@
 #define TIME_PAGE_HEADER \
     "<h1>Current time</h1>"
 
+#define POSITION_PAGE_HEADER \
+    "<h1>Current position</h1>"
+    
 #define TIME_PAGE_FOOTER \
     "<br/>(All times in UTC.)"
-
+    
+#define POSITION_PAGE_FOOTER \
+    "<br/>"
+    
 #define COMMON_PAGE_FOOTER \
     "<div class=\"bottom\">Copyright &copy; 2013 Mooneer Salem. All rights reserved. <a href=\"http://github.com/tmiw/arduino-ntpd\">Source code here</a>.</div>" \
     "</body>" \

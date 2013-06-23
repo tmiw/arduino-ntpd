@@ -72,7 +72,8 @@ void GPSTimeSource::now(uint32_t *secs, uint32_t *fract)
 
             gps_.crack_datetime(&year, &month, &day,
               &hour, &minutes, &second, &hundredths, &fix_age);
-          
+            gps_.get_position(&lat_, &long_);
+            
             // We don't want to use the time we've received if 
             // the fix is invalid.
             if (fix_age != TinyGPS::GPS_INVALID_AGE && fix_age < 5000 && year >= 2013)

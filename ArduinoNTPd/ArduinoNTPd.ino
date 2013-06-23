@@ -69,12 +69,33 @@ void timePage(HttpServer *server)
     server->print(COMMON_PAGE_FOOTER);
 }
 
+void positionPage(HttpServer *server)
+{
+    server->responseOK();
+    timeSource.now(NULL, NULL);
+    int32_t latitude = timeSource.latitude();
+    int32_t longitude = timeSource.longitude();
+    
+    server->print(COMMON_PAGE_HEADER);
+    server->print(POSITION_PAGE_HEADER);
+    server->print(latitude / 100000);
+    server->print(".");
+    server->print(abs(latitude % 100000));
+    server->print(", ");
+    server->print(longitude / 100000);
+    server->print(".");
+    server->print(abs(longitude % 100000));
+    server->print(POSITION_PAGE_FOOTER);
+    server->print(COMMON_PAGE_FOOTER);
+}
+
 UrlHandler handlers[] = {
     UrlHandler("/", rootPage),
     UrlHandler("/time", timePage),
+    UrlHandler("/location", positionPage)
 };
 
-HttpServer httpServer(handlers, 2);
+HttpServer httpServer(handlers, 3);
 
 void setup()
 {
