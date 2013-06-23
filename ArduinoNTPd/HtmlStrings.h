@@ -21,6 +21,7 @@
 #define COMMON_PAGE_HEADER \
     "<html>" \
     "<head>" \
+    "<meta http-equiv=\"Refresh\" content=\"5\" />" \
     "<title>arduino-ntpd</title>" \
     "<style type=\"text/css\">" \
     "<!--" \
