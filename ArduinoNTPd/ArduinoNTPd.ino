@@ -89,13 +89,20 @@ void positionPage(HttpServer *server)
     server->print(COMMON_PAGE_FOOTER);
 }
 
+void aboutPage(HttpServer *server)
+{
+    server->responseOK();
+    server->print(ABOUT_PAGE);
+}
+
 UrlHandler handlers[] = {
     UrlHandler("/", rootPage),
     UrlHandler("/time", timePage),
-    UrlHandler("/location", positionPage)
+    UrlHandler("/location", positionPage),
+    UrlHandler("/about", aboutPage)
 };
 
-HttpServer httpServer(handlers, 3);
+HttpServer httpServer(handlers, sizeof(handlers) / sizeof(UrlHandler));
 
 void setup()
 {

@@ -9,6 +9,8 @@
 #ifndef HTML_STRINGS_H
 #define HTML_STRINGS_H
 
+#include "version.h"
+
 #define CRLF "\r\n"
 
 #define COMMON_PAGE_STYLE \
@@ -30,24 +32,37 @@
     "</style>" \
     "</head>" \
     "<body>" \
-    "<div class=\"nav\"><a href=\"/time\">Current time</a> | <a href=\"/location\">Current location</a></div>" \
+    "<div class=\"nav\"><a href=\"/time\">Current time</a> | <a href=\"/location\">Current location</a> | <a href=\"/about\">About</a></div>" \
 
 #define TIME_PAGE_HEADER \
     "<h1>Current time</h1>"
 
 #define POSITION_PAGE_HEADER \
     "<h1>Current position</h1>"
+
+#define ABOUT_PAGE_HEADER \
+    "<h1>About</h1>"
     
 #define TIME_PAGE_FOOTER \
     "<br/>(All times in UTC.)"
     
 #define POSITION_PAGE_FOOTER \
     "<br/>"
-    
+
+#define ABOUT_PAGE_FOOTER POSITION_PAGE_FOOTER
+
 #define COMMON_PAGE_FOOTER \
     "<div class=\"bottom\">Copyright &copy; 2013 Mooneer Salem. All rights reserved. <a href=\"http://github.com/tmiw/arduino-ntpd\">Source code here</a>.</div>" \
     "</body>" \
     "</html>"
     
-
+#define ABOUT_PAGE \
+    COMMON_PAGE_HEADER \
+    ABOUT_PAGE_HEADER \
+    "arduino-ntpd version " \
+    APP_VERSION \
+    "<br />" \
+    ABOUT_PAGE_FOOTER \
+    COMMON_PAGE_FOOTER
+  
 #endif // HTML_STRINGS_H
