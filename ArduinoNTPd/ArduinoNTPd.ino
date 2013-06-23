@@ -23,6 +23,8 @@
 #include "HTTPServer.h"
 #include "TimeUtilities.h"
 
+#include "HtmlStrings.h"
+
 SerialDataSource dataSource;
 GPSTimeSource timeSource(dataSource);
 NtpServer timeServer(timeSource);
@@ -50,7 +52,8 @@ void timePage(HttpServer *server)
     uint32_t year, month, day, hour, minute, second;
     TimeUtilities::dateFromNumberOfSeconds(secs, &year, &month, &day, &hour, &minute, &second);
     
-    server->print("Current date: ");
+    server->print(COMMON_PAGE_HEADER);
+    server->print(TIME_PAGE_HEADER);
     server->print(year);
     server->print("-");
     zeroPrepend(server, month);
@@ -62,8 +65,8 @@ void timePage(HttpServer *server)
     zeroPrepend(server, minute);
     server->print(":");
     zeroPrepend(server, second);
-    server->print("<br/>");
-    server->print("(All times in UTC.)");
+    server->print(TIME_PAGE_FOOTER);
+    server->print(COMMON_PAGE_FOOTER);
 }
 
 UrlHandler handlers[] = {
