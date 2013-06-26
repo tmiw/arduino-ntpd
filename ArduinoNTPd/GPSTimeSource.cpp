@@ -23,7 +23,8 @@ void GPSTimeSource::enableInterrupts()
 {
 #ifdef ETH_RX_PIN
     // Enable Ethernet interrupt first to reduce difference between the two timers.
-    W5100.writeIMR(0x0F);
+    // NOTE: NTP server must _always_ be initialized first to ensure that it occupies socket 0.
+    W5100.writeIMR(0x01);
 #endif
 
     Singleton_ = this;

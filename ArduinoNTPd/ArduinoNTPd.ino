@@ -114,6 +114,9 @@ void setup()
     // Set up network.
     Ethernet.begin(macAddress, ipAddress);
     dataSource.begin();
+    
+    // NOTE: NTP server must _always_ be initialized first to ensure that it occupies socket 0
+    // and thus allow input capture to work properly for grabbing RX time.
     timeServer.beginListening();
     httpServer.beginListening();
 
@@ -124,7 +127,7 @@ void setup()
 void loop()
 {
     bool processed = timeServer.processOneRequest();
-    processed |= httpServer.processOneRequest();
+    httpServer.processOneRequest();
 
 #ifdef ETH_RX_PIN
     if (processed)
