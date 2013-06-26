@@ -36,6 +36,10 @@ extern byte macAddress[];
 // The pin that the timer uses to capture the interrupt.
 #define PPS_PIN 49
 
+// The pin that the timer uses to capture the Ethernet receive.
+// (Comment out if not using.)
+#define ETH_RX_PIN 48
+
 // RX pin for the GPS receiver/shield. This should support change interrupts
 // per NewSoftSerial documentation.
 //#define GPS_RX_PIN 11

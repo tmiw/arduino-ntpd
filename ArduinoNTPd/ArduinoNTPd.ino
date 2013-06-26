@@ -124,6 +124,53 @@ void loop()
 {
     timeServer.processOneRequest();
     httpServer.processOneRequest();
+
+#ifdef ETH_RX_PIN
+    // Clear all but socket interrupts.
+    DDRB  |=  _BV(4);
+    PORTB &= ~_BV(4);
+    SPI.transfer(0xF0);                // opcode 0xF0 = Write Operation // opcode 0x0F = read operation
+    SPI.transfer(0x00);                // Adress field
+    SPI.transfer(0x15);                // Adress field
+    SPI.transfer(0xE0);                // Data field
+    PORTB |=  _BV(4);
+    
+    // Socket 3 interrupt clear.
+    DDRB  |=  _BV(4);
+    PORTB &= ~_BV(4);
+    SPI.transfer(0xF0);                // opcode 0xF0 = Write Operation // opcode 0x0F = read operation
+    SPI.transfer(0x07);                // Adress field
+    SPI.transfer(0x02);                // Adress field
+    SPI.transfer(0xFF);                // Data field
+    PORTB |=  _BV(4);
+    
+    // Socket 2 interrupt clear.
+    DDRB  |=  _BV(4);
+    PORTB &= ~_BV(4);
+    SPI.transfer(0xF0);                // opcode 0xF0 = Write Operation // opcode 0x0F = read operation
+    SPI.transfer(0x06);                // Adress field
+    SPI.transfer(0x02);                // Adress field
+    SPI.transfer(0xFF);                // Data field
+    PORTB |=  _BV(4);
+    
+    // Socket 1 interrupt clear.
+    DDRB  |=  _BV(4);
+    PORTB &= ~_BV(4);
+    SPI.transfer(0xF0);                // opcode 0xF0 = Write Operation // opcode 0x0F = read operation
+    SPI.transfer(0x05);                // Adress field
+    SPI.transfer(0x02);                // Adress field
+    SPI.transfer(0xFF);                // Data field
+    PORTB |=  _BV(4);
+    
+    // Socket 0 interrupt clear.
+    DDRB  |=  _BV(4);
+    PORTB &= ~_BV(4);
+    SPI.transfer(0xF0);                // opcode 0xF0 = Write Operation // opcode 0x0F = read operation
+    SPI.transfer(0x04);                // Adress field
+    SPI.transfer(0x02);                // Adress field
+    SPI.transfer(0xFF);                // Data field
+    PORTB |=  _BV(4);
+#endif
 }
 
 #endif // defined(ARDUINO)

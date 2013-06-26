@@ -26,7 +26,10 @@ void NtpServer::processOneRequest()
     // We need the time we've received the packet in our response.
     uint32_t recvSecs, recvFract;
     timeSource_.now(&recvSecs, &recvFract);
-        
+#ifdef ETH_RX_PIN
+    timeSource_.timeRecv(&recvSecs, &recvFract);
+#endif
+
     int packetDataSize = timeServerPort_.parsePacket();
     if (packetDataSize && packetDataSize >= NtpPacket::PACKET_SIZE)
     {

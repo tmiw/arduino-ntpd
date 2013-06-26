@@ -5,15 +5,36 @@
  * Author: Mooneer Salem <mooneer@gmail.com>
  * License: New BSD License
  */
- 
+
+#include "config.h"
+
+#ifdef ETH_RX_PIN
+#include <SPI.h>
+#endif // ETH_RX_PIN
+
 #include "GPSTimeSource.h"
 #include "TimeUtilities.h"
 
 GPSTimeSource *GPSTimeSource::Singleton_ = NULL;
 volatile uint32_t overflows = 0;
+volatile uint32_t overflowsRecv = 0;
 
 void GPSTimeSource::enableInterrupts()
 {
+#ifdef ETH_RX_PIN
+    // Enable Ethernet interrupt first to reduce difference between the two timers.
+    SPI.begin();                       // Starts the SPI Library
+    SPI.setBitOrder(MSBFIRST);         // W5100 needs MSB first
+
+    DDRB  |=  _BV(4);
+    PORTB &= ~_BV(4);
+    SPI.transfer(0xF0);                // opcode 0xF0 = Write Operation // opcode 0x0F = read operation
+    SPI.transfer(0x00);                // Adress field
+    SPI.transfer(0x16);                // Adress field
+    SPI.transfer(0xFF);                // Data field
+    PORTB |=  _BV(4);
+#endif
+
     Singleton_ = this;
     pinMode(PPS_PIN, INPUT);
     
@@ -22,11 +43,21 @@ void GPSTimeSource::enableInterrupts()
     TCCR4B |= _BV(ICES4);           // enable input capture
     TIMSK4 |= _BV(ICIE4);           // enable input capture interrupt for timer 4
     TIMSK4 |= _BV(TOIE4);           // overflow interrupt
+
+#ifdef ETH_RX_PIN
+    pinMode(ETH_RX_PIN, INPUT);
     
+    TCCR5A = 0 ;                    // Normal counting mode
+    TCCR5B = B010;                  // set prescale bits
+    //TCCR5B |= _BV(ICES5);           // enable input capture
+    TIMSK5 |= _BV(ICIE5);           // enable input capture interrupt for timer 5
+    TIMSK5 |= _BV(TOIE5);           // overflow interrupt
+#endif
+
     Serial.println("interrupts enabled");
 }
 
-void GPSTimeSource::PpsInterruptNew()
+void GPSTimeSource::PpsInterrupt()
 {
     // Get saved time value.
     uint32_t tmrVal = (overflows << 16) | ICR4;
@@ -39,6 +70,23 @@ void GPSTimeSource::PpsInterruptNew()
     GPSTimeSource::Singleton_->millisecondsOfLastUpdate_ = tmrVal;
 }
 
+void GPSTimeSource::RecvInterrupt()
+{
+    // Get saved time value.
+    uint32_t tmrVal = (overflowsRecv << 16) | ICR5;
+    uint32_t tmrDiff = tmrVal - GPSTimeSource::Singleton_->millisecondsOfLastUpdate_;
+    
+    GPSTimeSource::Singleton_->fractionalSecondsOfRecv_ =
+        (tmrDiff % GPSTimeSource::Singleton_->microsecondsPerSecond_) * 
+        (0xFFFFFFFF / GPSTimeSource::Singleton_->microsecondsPerSecond_);
+   
+    GPSTimeSource::Singleton_->secondsOfRecv_ = GPSTimeSource::Singleton_->secondsSinceEpoch_;     
+    if (tmrDiff > GPSTimeSource::Singleton_->microsecondsPerSecond_)
+    {
+        ++GPSTimeSource::Singleton_->secondsOfRecv_;
+    }
+}
+
 ISR(TIMER4_OVF_vect)
 {
     ++overflows;
@@ -46,7 +94,17 @@ ISR(TIMER4_OVF_vect)
 
 ISR(TIMER4_CAPT_vect)
 {
-    GPSTimeSource::PpsInterruptNew();
+    GPSTimeSource::PpsInterrupt();
+}
+
+ISR(TIMER5_OVF_vect)
+{
+    ++overflowsRecv;
+}
+
+ISR(TIMER5_CAPT_vect)
+{
+    GPSTimeSource::RecvInterrupt();
 }
 
 void GPSTimeSource::updateFractionalSeconds_(void)

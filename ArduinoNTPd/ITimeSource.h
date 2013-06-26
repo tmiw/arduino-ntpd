@@ -19,6 +19,11 @@ public:
      * Grabs latest time from the time source.
      */
     virtual void now(uint32_t *secs, uint32_t *fract) = 0;
+    
+    /*
+     * Ethernet receive time.
+     */
+    virtual uint32_t timeRecv(uint32_t *secs, uint32_t *fract) const = 0;
 };
 
 #endif // I_TIMESOURCE_H

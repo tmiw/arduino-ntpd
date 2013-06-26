@@ -55,15 +55,30 @@ public:
     void enableInterrupts();
     
     /*
-     * Interrupt handler.
+     * Interrupt handler for PPS input.
      */
-    static void PpsInterruptNew();
+    static void PpsInterrupt();
+    
+    /*
+     * Interrupt handler for Ethernet input.
+     */
+    static void RecvInterrupt();
     
     /*
      * Retrieves current location.
      */
     int32_t latitude() const { return lat_; }
     int32_t longitude() const { return long_; }
+    
+    /*
+     * Ethernet receive time.
+     */
+    virtual uint32_t timeRecv(uint32_t *secs, uint32_t *fract) const
+    {
+        *secs = secondsOfRecv_;
+        *fract = fractionalSecondsOfRecv_;
+    }
+    
 private:
     static GPSTimeSource *Singleton_;
     
@@ -73,6 +88,8 @@ private:
     uint32_t fractionalSecondsSinceEpoch_;
     uint32_t millisecondsOfLastUpdate_;
     uint32_t microsecondsPerSecond_;
+    uint32_t secondsOfRecv_;
+    uint32_t fractionalSecondsOfRecv_;
     
     int32_t lat_;
     int32_t long_;
