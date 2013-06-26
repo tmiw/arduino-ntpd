@@ -23,7 +23,7 @@ void GPSTimeSource::enableInterrupts()
 {
 #ifdef ETH_RX_PIN
     // Enable Ethernet interrupt first to reduce difference between the two timers.
-    W5100.writeIMR(0xFF);
+    W5100.writeIMR(0x0F);
 #endif
 
     Singleton_ = this;
@@ -31,7 +31,7 @@ void GPSTimeSource::enableInterrupts()
     
     TCCR4A = 0 ;                    // Normal counting mode
     TCCR4B = B010;                  // set prescale bits
-    TCCR4B |= _BV(ICES4);           // enable input capture
+    TCCR4B |= _BV(ICES4);           // enable input capture when pin goes high
     TIMSK4 |= _BV(ICIE4);           // enable input capture interrupt for timer 4
     TIMSK4 |= _BV(TOIE4);           // overflow interrupt
 
@@ -40,7 +40,7 @@ void GPSTimeSource::enableInterrupts()
     
     TCCR5A = 0 ;                    // Normal counting mode
     TCCR5B = B010;                  // set prescale bits
-    //TCCR5B |= _BV(ICES5);           // enable input capture
+                                    // enable input capture when pin goes low (default).
     TIMSK5 |= _BV(ICIE5);           // enable input capture interrupt for timer 5
     TIMSK5 |= _BV(TOIE5);           // overflow interrupt
 #endif
@@ -66,7 +66,7 @@ void GPSTimeSource::RecvInterrupt()
     // Get saved time value.
     uint32_t tmrVal = (overflowsRecv << 16) | ICR5;
     uint32_t tmrDiff = tmrVal - GPSTimeSource::Singleton_->millisecondsOfLastUpdate_;
-    
+
     GPSTimeSource::Singleton_->fractionalSecondsOfRecv_ =
         (tmrDiff % GPSTimeSource::Singleton_->microsecondsPerSecond_) * 
         (0xFFFFFFFF / GPSTimeSource::Singleton_->microsecondsPerSecond_);
