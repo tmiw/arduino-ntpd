@@ -9,7 +9,7 @@
 #include "config.h"
 
 #ifdef ETH_RX_PIN
-#include <SPI.h>
+#include "utility/w5100.h"
 #endif // ETH_RX_PIN
 
 #include "GPSTimeSource.h"
@@ -23,16 +23,7 @@ void GPSTimeSource::enableInterrupts()
 {
 #ifdef ETH_RX_PIN
     // Enable Ethernet interrupt first to reduce difference between the two timers.
-    SPI.begin();                       // Starts the SPI Library
-    SPI.setBitOrder(MSBFIRST);         // W5100 needs MSB first
-
-    DDRB  |=  _BV(4);
-    PORTB &= ~_BV(4);
-    SPI.transfer(0xF0);                // opcode 0xF0 = Write Operation // opcode 0x0F = read operation
-    SPI.transfer(0x00);                // Adress field
-    SPI.transfer(0x16);                // Adress field
-    SPI.transfer(0xFF);                // Data field
-    PORTB |=  _BV(4);
+    W5100.writeIMR(0xFF);
 #endif
 
     Singleton_ = this;
