@@ -28,7 +28,7 @@ public:
     /*
      * Processes a single NTP request.
      */
-    void processOneRequest(void);
+    bool processOneRequest(void);
     
 private:
     ITimeSource &timeSource_;

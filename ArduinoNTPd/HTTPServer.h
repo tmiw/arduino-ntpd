@@ -45,7 +45,7 @@ public:
     /*
      * Processes a single HTTP request.
      */
-    void processOneRequest();
+    bool processOneRequest();
     
     /*
      * Redirects the user to a new URL.

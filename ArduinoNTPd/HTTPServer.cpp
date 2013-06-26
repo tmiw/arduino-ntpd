@@ -16,8 +16,10 @@ void HttpServer::beginListening()
     httpServerPort_.begin();
 }
 
-void HttpServer::processOneRequest()
+bool HttpServer::processOneRequest()
 {
+    bool processed = false;
+    
     // Retrieve a connection if we're not already working on one.
     currentClient_ = httpServerPort_.available();
     
@@ -37,6 +39,7 @@ void HttpServer::processOneRequest()
                     // Finished reading the HTTP request.
                     routeRequest_();
                     resetServerState_();
+                    processed = true;
                 }
                 else
                 {
@@ -76,6 +79,8 @@ void HttpServer::processOneRequest()
             }
         }
     }
+    
+    return processed;
 }
 
 void HttpServer::responseRedirect(char *url)

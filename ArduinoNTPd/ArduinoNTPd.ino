@@ -123,16 +123,19 @@ void setup()
 
 void loop()
 {
-    timeServer.processOneRequest();
-    httpServer.processOneRequest();
+    bool processed = timeServer.processOneRequest();
+    processed |= httpServer.processOneRequest();
 
 #ifdef ETH_RX_PIN
-    // Clear all interrupts.
-    W5100.writeIR(0xE0);
-    W5100.writeSnIR(3, 0xff);
-    W5100.writeSnIR(2, 0xff);
-    W5100.writeSnIR(1, 0xff);
-    W5100.writeSnIR(0, 0xff);
+    if (processed)
+    {
+        // Clear all interrupts.
+        W5100.writeIR(0xE0);
+        W5100.writeSnIR(3, 0xff);
+        W5100.writeSnIR(2, 0xff);
+        W5100.writeSnIR(1, 0xff);
+        W5100.writeSnIR(0, 0xff);
+    }
 #endif
 }
 

@@ -21,10 +21,12 @@ void NtpServer::beginListening()
     timeServerPort_.begin(NTP_PORT);
 }
 
-void NtpServer::processOneRequest()
+bool NtpServer::processOneRequest()
 {
     // We need the time we've received the packet in our response.
     uint32_t recvSecs, recvFract;
+    bool processed = false;
+    
     timeSource_.now(&recvSecs, &recvFract);
 #ifdef ETH_RX_PIN
     timeSource_.timeRecv(&recvSecs, &recvFract);
@@ -70,7 +72,10 @@ void NtpServer::processOneRequest()
             timeServerPort_.write(packet.packet()[count]);
         }
         timeServerPort_.endPacket();
+        processed = true;
     } 
+    
+    return processed;
 }
 
 #endif // defined(ARDUINO)
