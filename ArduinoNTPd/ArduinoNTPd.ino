@@ -79,13 +79,13 @@ void positionPage(HttpServer *server)
     
     server->print(COMMON_PAGE_HEADER);
     server->print(POSITION_PAGE_HEADER);
-    server->print(latitude / 100000);
+    server->print(latitude / 1000000);
     server->print(".");
-    server->print(abs(latitude % 100000));
+    server->print(abs(latitude % 1000000));
     server->print(", ");
-    server->print(longitude / 100000);
+    server->print(longitude / 1000000);
     server->print(".");
-    server->print(abs(longitude % 100000));
+    server->print(abs(longitude % 1000000));
     server->print(POSITION_PAGE_FOOTER);
     server->print(COMMON_PAGE_FOOTER);
 }
