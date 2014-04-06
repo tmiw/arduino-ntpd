@@ -51,6 +51,9 @@ extern byte macAddress[];
 // (possible choices: Serial1, Serial2, Serial3)
 #define HARDWARE_SERIAL_CLASS Serial1
 
+// Uncomment the below to use DHCP instead of static IP allocation.
+#define NETWORK_USE_DHCP 1
+
 #endif // defined(ARDUINO)
 
 #endif // CONFIG_H

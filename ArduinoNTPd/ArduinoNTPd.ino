@@ -112,7 +112,15 @@ void setup()
     Serial.println("ArduinoNTPd starting.");
     
     // Set up network.
-    Ethernet.begin(macAddress, ipAddress);
+#ifdef NETWORK_USE_DHCP
+    int ret = Ethernet.begin(macAddress);
+    if (ret == 0)
+#endif
+    {
+        // Use default IP if DHCP does not work or is disabled.
+        Ethernet.begin(macAddress, ipAddress);
+    }
+    
     dataSource.begin();
     
     // NOTE: NTP server must _always_ be initialized first to ensure that it occupies socket 0
