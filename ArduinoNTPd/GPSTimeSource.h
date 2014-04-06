@@ -67,8 +67,8 @@ public:
     /*
      * Retrieves current location.
      */
-    int32_t latitude() const { return lat_; }
-    int32_t longitude() const { return long_; }
+    float latitude() const { return lat_; }
+    float longitude() const { return long_; }
     
     /*
      * Ethernet receive time.
@@ -91,8 +91,8 @@ private:
     uint32_t secondsOfRecv_;
     uint32_t fractionalSecondsOfRecv_;
     
-    int32_t lat_;
-    int32_t long_;
+    float lat_;
+    float long_;
     
     bool hasLocked_;
 

@@ -74,18 +74,14 @@ void positionPage(HttpServer *server)
 {
     server->responseOK();
     timeSource.now(NULL, NULL);
-    int32_t latitude = timeSource.latitude();
-    int32_t longitude = timeSource.longitude();
+    float latitude = timeSource.latitude();
+    float longitude = timeSource.longitude();
     
     server->print(COMMON_PAGE_HEADER);
     server->print(POSITION_PAGE_HEADER);
-    server->print(latitude / 1000000);
-    server->print(".");
-    server->print(abs(latitude % 1000000));
+    server->print(latitude);
     server->print(", ");
-    server->print(longitude / 1000000);
-    server->print(".");
-    server->print(abs(longitude % 1000000));
+    server->print(longitude);
     server->print(POSITION_PAGE_FOOTER);
     server->print(COMMON_PAGE_FOOTER);
 }
