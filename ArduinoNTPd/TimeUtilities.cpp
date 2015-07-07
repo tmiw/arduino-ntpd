@@ -163,7 +163,7 @@ uint32_t TimeUtilities::numberOfLeapSecondsInYear(uint32_t year, bool skipDecemb
     static uint32_t leapSecondAdds[] = {
         0xD5552A21, // 1972-1988
         0x14A92400, // 1989-2005
-        0x10408000, // 2006-2022
+        0x04082000, // 2006-2022
         0x00000000  // 2023-2039
     };
     static uint32_t leapSecondDeletes[] = {
