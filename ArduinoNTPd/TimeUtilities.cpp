@@ -95,6 +95,17 @@ void TimeUtilities::dateFromNumberOfSeconds(
     *second = secs;
 }
 
+bool TimeUtilities::isLeapYear(uint32_t year)
+{
+    int multipleOfFour = (year % 4) == 0;
+    int multipleOfOneHundred = (year % 100) == 0;
+    int multipleOfFourHundred = (year % 400) == 0;
+        
+    // Formula: years divisble by 4 are leap years, EXCEPT if it's
+    // divisible by 100 and not by 400.
+    return (multipleOfFour && !(multipleOfOneHundred && !multipleOfFourHundred));
+}
+
 uint32_t TimeUtilities::numberOfSecondsSince1900Epoch(
     uint32_t year, uint32_t month, uint32_t day, uint32_t hour, uint32_t minute, uint32_t second)
 {
@@ -129,25 +140,23 @@ uint32_t TimeUtilities::numberOfSecondsSince1900Epoch(
     //   a) We need to account for leap years.
     //   b) We need to account for different sized months.
     uint32_t numDays = 0;
-    for (uint32_t currentYear = EPOCH_YEAR; currentYear <= year; currentYear++)
+    for (uint32_t currentYear = EPOCH_YEAR; currentYear < year; currentYear++)
     {
-        int multipleOfFour = (currentYear % 4) == 0;
-        int multipleOfOneHundred = (currentYear % 100) == 0;
-        int multipleOfFourHundred = (currentYear % 400) == 0;
-        
-        // Formula: years divisble by 4 are leap years, EXCEPT if it's
-        // divisible by 100 and not by 400.
-        if (multipleOfFour && !(multipleOfOneHundred && !multipleOfFourHundred))
+        if (isLeapYear(currentYear))
         {
             numDays++;
         }
     }
     numDays += DAYS_IN_YEAR * (year - EPOCH_YEAR);
-    for (uint32_t currentMonth = 1; currentMonth < month; currentMonth++)
+    for (uint32_t currentMonth = 0; currentMonth < month - 1; currentMonth++)
     {
         numDays += numDaysInMonths[currentMonth];
     }
-    numDays += day;
+    numDays += day - 1;
+    if (isLeapYear(year) && month > 2)
+    {
+        numDays++;
+    }
     returnValue += numDays * SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY;
     
     // Return final result.

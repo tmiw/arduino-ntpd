@@ -50,6 +50,11 @@ public:
         uint32_t year, uint32_t month, uint32_t day, uint32_t hour, uint32_t minute, uint32_t second);
 
     /*
+     * Returns whether a year is a leap year.
+     */
+    static bool isLeapYear(uint32_t year);
+
+    /*
      * Returns the number of leap seconds that occurred in the given year.
      */
     static uint32_t numberOfLeapSecondsInYear(uint32_t year, bool skipDecember);
