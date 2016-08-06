@@ -65,7 +65,7 @@ struct NtpPacket
     /*
      * Copies packet buffer to packet object.
      */
-    void populatePacket(char *buffer)
+    void populatePacket(const char *buffer)
     {
         memcpy(this, buffer, PACKET_SIZE);
     }

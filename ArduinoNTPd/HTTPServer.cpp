@@ -83,7 +83,7 @@ bool HttpServer::processOneRequest()
     return processed;
 }
 
-void HttpServer::responseRedirect(char *url)
+void HttpServer::responseRedirect(const char *url)
 {
     currentClient_.println("HTTP/1.0 302 Found");
     currentClient_.print("Location: ");
@@ -129,7 +129,7 @@ void HttpServer::routeRequest_()
     }
 }
 
-void HttpServer::sendHttpResponseHeaders_(int code, char *description)
+void HttpServer::sendHttpResponseHeaders_(int code, const char *description)
 {
     currentClient_.print("HTTP/1.0 ");
     currentClient_.print(code, DEC);

@@ -17,10 +17,10 @@ typedef void (*UrlHandlerFn)(HttpServer *server);
 
 struct UrlHandler
 {
-    UrlHandler(char *p, UrlHandlerFn fn)
+    UrlHandler(const char *p, UrlHandlerFn fn)
         : path(p), function(fn) { }
         
-    char *path;
+    const char *path;
     UrlHandlerFn function;
 };
 
@@ -50,7 +50,7 @@ public:
     /*
      * Redirects the user to a new URL.
      */
-    void responseRedirect(char *url);
+    void responseRedirect(const char *url);
     
     /*
      * Send OK response to client.
@@ -116,7 +116,7 @@ private:
     /*
      * Sends HTTP response headers to client.
      */
-    void sendHttpResponseHeaders_(int code, char *description);
+    void sendHttpResponseHeaders_(int code, const char *description);
 };
 
 #endif // HTTP_SERVER_H
