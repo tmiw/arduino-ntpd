@@ -101,6 +101,8 @@ UrlHandler handlers[] = {
 
 HttpServer httpServer(handlers, sizeof(handlers) / sizeof(UrlHandler));
 
+int usingDHCP = 0;
+
 void setup()
 {
     // Print banner.
@@ -109,8 +111,8 @@ void setup()
     
     // Set up network.
 #ifdef NETWORK_USE_DHCP
-    int ret = Ethernet.begin(macAddress);
-    if (ret == 0)
+    usingDHCP = Ethernet.begin(macAddress);
+    if (usingDHCP == 0)
 #endif
     {
         // Use default IP if DHCP does not work or is disabled.
@@ -144,6 +146,11 @@ void loop()
         W5100.writeSnIR(0, 0xff);
     }
 #endif
+
+  // Renew DHCP lease if needed, etc.
+  if (usingDHCP) {
+    Ethernet.maintain();
+  }
 }
 
 #endif // defined(ARDUINO)
