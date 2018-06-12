@@ -39,7 +39,7 @@ static void zeroPrepend(HttpServer *server, int val)
 {
     if (val < 10)
     {
-        server->print("0");
+        server->print(F("0"));
     }
     server->print(val);
 }
@@ -53,21 +53,21 @@ void timePage(HttpServer *server)
     uint32_t year, month, day, hour, minute, second;
     TimeUtilities::dateFromNumberOfSeconds(secs, &year, &month, &day, &hour, &minute, &second);
     
-    server->print(COMMON_PAGE_HEADER);
-    server->print(TIME_PAGE_HEADER);
+    server->print(F(COMMON_PAGE_HEADER));
+    server->print(F(TIME_PAGE_HEADER));
     server->print(year);
-    server->print("-");
+    server->print(F("-"));
     zeroPrepend(server, month);
-    server->print("-");
+    server->print(F("-"));
     zeroPrepend(server, day);
-    server->print(" ");
+    server->print(F(" "));
     zeroPrepend(server, hour);
-    server->print(":");
+    server->print(F(":"));
     zeroPrepend(server, minute);
-    server->print(":");
+    server->print(F(":"));
     zeroPrepend(server, second);
-    server->print(TIME_PAGE_FOOTER);
-    server->print(COMMON_PAGE_FOOTER);
+    server->print(F(TIME_PAGE_FOOTER));
+    server->print(F(COMMON_PAGE_FOOTER));
 }
 
 void positionPage(HttpServer *server)
@@ -77,19 +77,19 @@ void positionPage(HttpServer *server)
     float latitude = timeSource.latitude();
     float longitude = timeSource.longitude();
     
-    server->print(COMMON_PAGE_HEADER);
-    server->print(POSITION_PAGE_HEADER);
+    server->print(F(COMMON_PAGE_HEADER));
+    server->print(F(POSITION_PAGE_HEADER));
     server->print(latitude);
-    server->print(", ");
+    server->print(F(", "));
     server->print(longitude);
-    server->print(POSITION_PAGE_FOOTER);
-    server->print(COMMON_PAGE_FOOTER);
+    server->print(F(POSITION_PAGE_FOOTER));
+    server->print(F(COMMON_PAGE_FOOTER));
 }
 
 void aboutPage(HttpServer *server)
 {
     server->responseOK();
-    server->print(ABOUT_PAGE);
+    server->print(F(ABOUT_PAGE));
 }
 
 UrlHandler handlers[] = {
@@ -107,7 +107,7 @@ void setup()
 {
     // Print banner.
     Serial.begin(115200);
-    Serial.println("ArduinoNTPd starting.");
+    Serial.println(F("ArduinoNTPd starting."));
     
     // Set up network.
 #ifdef NETWORK_USE_DHCP
@@ -119,7 +119,7 @@ void setup()
         Ethernet.begin(macAddress, ipAddress);
     }
     
-    dataSource.begin();
+    dataSource.begin(GPS_BAUD); // default is 4800 BAUD
     
     // NOTE: NTP server must _always_ be initialized first to ensure that it occupies socket 0
     // and thus allow input capture to work properly for grabbing RX time.

@@ -85,17 +85,17 @@ bool HttpServer::processOneRequest()
 
 void HttpServer::responseRedirect(const char *url)
 {
-    currentClient_.println("HTTP/1.0 302 Found");
-    currentClient_.print("Location: ");
+    currentClient_.println(F("HTTP/1.0 302 Found"));
+    currentClient_.print(F("Location: "));
     currentClient_.println(url);
-    currentClient_.println("Connection: close");
-    currentClient_.println("Content-Type: text/html");
+    currentClient_.println(F("Connection: close"));
+    currentClient_.println(F("Content-Type: text/html"));
     currentClient_.println();
-    currentClient_.print("See <a href=\"");
+    currentClient_.print(F("See <a href=\""));
     currentClient_.print(url);
-    currentClient_.print("\">");
+    currentClient_.print(F("\">"));
     currentClient_.print(url);
-    currentClient_.println("</a> for new location.");
+    currentClient_.println(F("</a> for new location."));
 }
 
 void HttpServer::routeRequest_()
@@ -118,25 +118,25 @@ void HttpServer::routeRequest_()
         {
             // HTTP 404 Not Found
             sendHttpResponseHeaders_(404, "Not Found");
-            currentClient_.println("Not found.");
+            currentClient_.println(F("Not found."));
         }
     }
     else
     {
         // HTTP 405 Method Not Allowed
         sendHttpResponseHeaders_(405, "Method Not Allowed");
-        currentClient_.println("Not allowed.");
+        currentClient_.println(F("Not allowed."));
     }
 }
 
 void HttpServer::sendHttpResponseHeaders_(int code, const char *description)
 {
-    currentClient_.print("HTTP/1.0 ");
+    currentClient_.print(F("HTTP/1.0 "));
     currentClient_.print(code, DEC);
-    currentClient_.print(" ");
+    currentClient_.print(F(" "));
     currentClient_.println(description);
-    currentClient_.println("Connection: close");
-    currentClient_.println("Content-Type: text/html");
+    currentClient_.println(F("Connection: close"));
+    currentClient_.println(F("Content-Type: text/html"));
     currentClient_.println();
 }
 
