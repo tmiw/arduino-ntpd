@@ -29,12 +29,20 @@ void GPSTimeSource::enableInterrupts()
 
     Singleton_ = this;
     pinMode(PPS_PIN, INPUT);
-    
+
+#ifdef __AVR_ATmega2560__
     TCCR4A = 0 ;                    // Normal counting mode
     TCCR4B = B010;                  // set prescale bits
     TCCR4B |= _BV(ICES4);           // enable input capture when pin goes high
     TIMSK4 |= _BV(ICIE4);           // enable input capture interrupt for timer 4
     TIMSK4 |= _BV(TOIE4);           // overflow interrupt
+#else
+    TCCR1A = 0 ;                    // Normal counting mode
+    TCCR1B = B010;                  // set prescale bits
+    TCCR1B |= _BV(ICES1);           // enable input capture when pin goes high
+    TIMSK1 |= _BV(ICIE1);           // enable input capture interrupt for timer 4
+    TIMSK1 |= _BV(TOIE1);           // overflow interrupt
+#endif
 
 #ifdef ETH_RX_PIN
     pinMode(ETH_RX_PIN, INPUT);
@@ -46,14 +54,18 @@ void GPSTimeSource::enableInterrupts()
     TIMSK5 |= _BV(TOIE5);           // overflow interrupt
 #endif
 
-    Serial.println("interrupts enabled");
+    Serial.println(F("interrupts enabled"));
 }
 
 void GPSTimeSource::PpsInterrupt()
 {
     // Get saved time value.
+    #ifdef __AVR_ATmega2560__
     uint32_t tmrVal = (overflows << 16) | ICR4;
-    
+    #else
+    uint32_t tmrVal = (overflows << 16) | ICR1;
+    #endif
+
     GPSTimeSource::Singleton_->microsecondsPerSecond_ = 
         (GPSTimeSource::Singleton_->microsecondsPerSecond_ + 
         (tmrVal - Singleton_->millisecondsOfLastUpdate_)) / 2;
@@ -64,6 +76,7 @@ void GPSTimeSource::PpsInterrupt()
 
 void GPSTimeSource::RecvInterrupt()
 {
+#ifdef ETH_RX_PIN
     // Get saved time value.
     uint32_t tmrVal = (overflowsRecv << 16) | ICR5;
     uint32_t tmrDiff = tmrVal - GPSTimeSource::Singleton_->millisecondsOfLastUpdate_;
@@ -77,8 +90,10 @@ void GPSTimeSource::RecvInterrupt()
     {
         ++GPSTimeSource::Singleton_->secondsOfRecv_;
     }
+#endif
 }
 
+#ifdef __AVR_ATmega2560__
 ISR(TIMER4_OVF_vect)
 {
     ++overflows;
@@ -88,7 +103,18 @@ ISR(TIMER4_CAPT_vect)
 {
     GPSTimeSource::PpsInterrupt();
 }
+#else
+ISR(TIMER1_OVF_vect)
+{
+    ++overflows;
+}
 
+ISR(TIMER1_CAPT_vect)
+{
+    GPSTimeSource::PpsInterrupt();
+}
+#endif
+#ifdef ETH_RX_PIN
 ISR(TIMER5_OVF_vect)
 {
     ++overflowsRecv;
@@ -98,12 +124,16 @@ ISR(TIMER5_CAPT_vect)
 {
     GPSTimeSource::RecvInterrupt();
 }
-
+#endif
 void GPSTimeSource::updateFractionalSeconds_(void)
 {
     // Calculate new fractional value based on system runtime
     // since the EM-406 does not seem to return anything other than whole seconds.
+    #ifdef __AVR_ATmega2560__
     uint32_t lastTime = (overflows << 16) | TCNT4;
+    #else
+    uint32_t lastTime = (overflows << 16) | TCNT1;
+    #endif
     uint32_t millisecondDifference = lastTime - millisecondsOfLastUpdate_;
     fractionalSecondsSinceEpoch_ = (millisecondDifference % microsecondsPerSecond_) * (0xFFFFFFFF / microsecondsPerSecond_);
 }
@@ -112,7 +142,10 @@ void GPSTimeSource::now(uint32_t *secs, uint32_t *fract)
 {
     while (dataSource_.available())
     {
-        int c = dataSource_.read();
+        char c = dataSource_.read();
+#ifdef _DEBUG
+        Serial.print(c);
+#endif
         if (gps_.encode(c))
         {
             // Grab time from now-valid data.
@@ -128,6 +161,9 @@ void GPSTimeSource::now(uint32_t *secs, uint32_t *fract)
             // the fix is invalid.
             if (fix_age != TinyGPS::GPS_INVALID_AGE && fix_age < 5000 && year >= 2013)
             {
+#ifdef _DEBUG
+              Serial.println(F(" > valid time"));
+#endif
                 uint32_t tempSeconds = 
                     TimeUtilities::numberOfSecondsSince1900Epoch(
                         year, month, day, hour, minutes, second);
@@ -140,6 +176,9 @@ void GPSTimeSource::now(uint32_t *secs, uint32_t *fract)
             }
             else
             {
+#ifdef _DEBUG
+              Serial.println(F(" > INVALID time"));
+#endif
                 // Set time to 0 if invalid.
                 // TODO: does the interface need an accessor for "invalid time"?
                 secondsSinceEpoch_ = 0;

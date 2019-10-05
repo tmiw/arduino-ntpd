@@ -40,7 +40,9 @@ bool NtpServer::processOneRequest()
         NtpPacket packet;
         timeServerPort_.read((char*)&packet, NtpPacket::PACKET_SIZE);
         // TODO: verify packet.
-        
+#ifdef _DEBUG
+        Serial.println(F("NTP request"));
+#endif
         // Populate response.
         packet.swapEndian();        
         packet.leapIndicator(0);

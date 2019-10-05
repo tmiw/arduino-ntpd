@@ -44,7 +44,7 @@
     "<h1>About</h1>"
     
 #define TIME_PAGE_FOOTER \
-    "<br/>(All times in UTC.)"
+    "<br/>(All times in UTC)"
     
 #define POSITION_PAGE_FOOTER \
     "<br/>"
