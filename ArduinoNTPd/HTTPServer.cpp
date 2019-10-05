@@ -117,24 +117,41 @@ void HttpServer::routeRequest_()
         if (!found)
         {
             // HTTP 404 Not Found
-            sendHttpResponseHeaders_(404, "Not Found");
+            sendHttpResponseHeaders_(404);
             currentClient_.println(F("Not found."));
         }
     }
     else
     {
         // HTTP 405 Method Not Allowed
-        sendHttpResponseHeaders_(405, "Method Not Allowed");
+        sendHttpResponseHeaders_(405);
         currentClient_.println(F("Not allowed."));
     }
 }
 
-void HttpServer::sendHttpResponseHeaders_(int code, const char *description)
+void HttpServer::sendHttpResponseHeaders_(int code)
 {
     currentClient_.print(F("HTTP/1.0 "));
     currentClient_.print(code, DEC);
     currentClient_.print(F(" "));
-    currentClient_.println(description);
+    switch(code)
+    {
+        case 200:
+            currentClient_.println(F("OK"));
+            break;
+        case 404:
+            currentClient_.println(F("Not Found"));
+            break;
+        case 405:
+            currentClient_.println(F("Method Not Allowed"));
+            break;
+        case 500:
+            currentClient_.println(F("Internal Server Error"));
+            break;
+        default:
+            currentClient_.println(F("Unknown"));
+            break;
+    }
     currentClient_.println(F("Connection: close"));
     currentClient_.println(F("Content-Type: text/html"));
     currentClient_.println();

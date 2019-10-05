@@ -57,7 +57,7 @@ public:
      */
     void responseOK()
     {
-        sendHttpResponseHeaders_(200, "OK");
+        sendHttpResponseHeaders_(200);
     }
 
     /*
@@ -65,7 +65,7 @@ public:
      */
     void responseError()
     {
-        sendHttpResponseHeaders_(500, "Internal Server Error");
+        sendHttpResponseHeaders_(500);
     }
 
     /*
@@ -116,7 +116,7 @@ private:
     /*
      * Sends HTTP response headers to client.
      */
-    void sendHttpResponseHeaders_(int code, const char *description);
+    void sendHttpResponseHeaders_(int code);
 };
 
 #endif // HTTP_SERVER_H

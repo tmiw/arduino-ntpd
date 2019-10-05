@@ -55,11 +55,8 @@ public:
         serialPort_.println(F("$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29"));
         // 1s NMEA update rate
         serialPort_.println(F("$PMTK220,1000*1F")); // 1 Hz
-        //serialPort_.println(F("$PMTK220,200*2C")); // 5 Hz
-        //serialPort_.println(F("$PMTK220,100*2F")); // 10Hz
         // 1s fix interval
-        //serialPort_.println(F("$PMTK300,1000,0,0,0,0*1C")); // 1 Hz
-        //serialPort_.println(F("$PMTK300,500,0,0,0,0*28")); // 2 Hz
+        serialPort_.println(F("$PMTK300,1000,0,0,0,0*1C")); // 1 Hz
         serialPort_.println(F("$PMTK285,2,100*23")); // Turn 1PPS on for 3D fix
 #elif (GPS_MODULE == 2) // UBLOX NEO6MV2 GPS
         Serial.println(F("UBLOX"));
