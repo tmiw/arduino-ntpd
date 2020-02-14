@@ -55,17 +55,28 @@ void timePage(HttpServer *server)
     
     server->print(F(COMMON_PAGE_HEADER));
     server->print(F(TIME_PAGE_HEADER));
-    server->print(year);
-    server->print(F("-"));
-    zeroPrepend(server, month);
-    server->print(F("-"));
-    zeroPrepend(server, day);
-    server->print(F(" "));
-    zeroPrepend(server, hour);
-    server->print(F(":"));
-    zeroPrepend(server, minute);
-    server->print(F(":"));
-    zeroPrepend(server, second);
+    server->print(F(GPS_STATUS));
+    if (timeSource.timeValid())
+    {
+        server->print(F(TIME_IS_VALID));
+
+        server->print(year);
+        server->print(F("-"));
+        zeroPrepend(server, month);
+        server->print(F("-"));
+        zeroPrepend(server, day);
+        server->print(F(" "));
+        zeroPrepend(server, hour);
+        server->print(F(":"));
+        zeroPrepend(server, minute);
+        server->print(F(":"));
+        zeroPrepend(server, second);
+    }
+    else
+    {
+        server->print(F(TIME_IS_NOT_VALID));
+    }
+
     server->print(F(TIME_PAGE_FOOTER));
     server->print(F(COMMON_PAGE_FOOTER));
 }

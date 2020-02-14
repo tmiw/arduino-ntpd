@@ -37,6 +37,10 @@
 #define TIME_PAGE_HEADER \
     "<h1>Current time</h1>"
 
+#define GPS_STATUS "GPS Lock: "
+#define TIME_IS_VALID "Yes<br/>"
+#define TIME_IS_NOT_VALID "No<br/>"
+
 #define POSITION_PAGE_HEADER \
     "<h1>Current position</h1>"
 

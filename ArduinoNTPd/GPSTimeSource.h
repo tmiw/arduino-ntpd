@@ -78,6 +78,11 @@ public:
         *secs = secondsOfRecv_;
         *fract = fractionalSecondsOfRecv_;
     }
+
+    /*
+     * Returns whether the time stored by the source is valid.
+     */
+    virtual bool timeValid() { return hasLocked_; }
     
 private:
     static GPSTimeSource *Singleton_;

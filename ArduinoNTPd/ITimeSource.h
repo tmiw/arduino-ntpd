@@ -24,6 +24,11 @@ public:
      * Ethernet receive time.
      */
     virtual uint32_t timeRecv(uint32_t *secs, uint32_t *fract) const = 0;
+
+    /*
+     * Returns whether the time stored by the source is valid.
+     */
+    virtual bool timeValid() = 0;
 };
 
 #endif // I_TIMESOURCE_H
