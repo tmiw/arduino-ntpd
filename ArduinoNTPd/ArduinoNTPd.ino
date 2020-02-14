@@ -90,9 +90,18 @@ void positionPage(HttpServer *server)
     
     server->print(F(COMMON_PAGE_HEADER));
     server->print(F(POSITION_PAGE_HEADER));
-    server->print(latitude);
-    server->print(F(", "));
-    server->print(longitude);
+    server->print(F(GPS_STATUS));
+    if (timeSource.timeValid())
+    {
+        server->print(F(TIME_IS_VALID));
+        server->print(latitude);
+        server->print(F(", "));
+        server->print(longitude);
+    }
+    else
+    {
+        server->print(F(TIME_IS_NOT_VALID));
+    }
     server->print(F(POSITION_PAGE_FOOTER));
     server->print(F(COMMON_PAGE_FOOTER));
 }
